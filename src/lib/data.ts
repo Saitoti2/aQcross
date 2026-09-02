@@ -74,6 +74,12 @@ export type Shop = {
   rating: number;
   verified: boolean;
   branch: string;
+  /** Short branded text shown inside the logo tile, e.g. "QM" */
+  logoText: string;
+  /** Tailwind bg class for the logo tile */
+  logoBg: string;
+  /** Tailwind text class for the logo text */
+  logoColor: string;
 };
 
 export const shops: Shop[] = [
@@ -85,6 +91,9 @@ export const shops: Shop[] = [
     rating: 4.7,
     verified: true,
     branch: "Ruaraka Branch",
+    logoText: "QM",
+    logoBg: "bg-[#E31837]",
+    logoColor: "text-white",
   },
   {
     slug: "chandarana",
@@ -94,6 +103,9 @@ export const shops: Shop[] = [
     rating: 4.6,
     verified: true,
     branch: "Thika Road Mall",
+    logoText: "CH",
+    logoBg: "bg-[#00529B]",
+    logoColor: "text-white",
   },
   {
     slug: "naivas",
@@ -103,6 +115,9 @@ export const shops: Shop[] = [
     rating: 4.8,
     verified: true,
     branch: "Roysambu Branch",
+    logoText: "NV",
+    logoBg: "bg-[#FF6B00]",
+    logoColor: "text-white",
   },
   {
     slug: "carrefour",
@@ -112,6 +127,9 @@ export const shops: Shop[] = [
     rating: 4.5,
     verified: true,
     branch: "Garden City Mall",
+    logoText: "CA",
+    logoBg: "bg-[#004F9F]",
+    logoColor: "text-white",
   },
   {
     slug: "goodlife-pharmacy",
@@ -121,6 +139,9 @@ export const shops: Shop[] = [
     rating: 4.9,
     verified: true,
     branch: "Allsops Branch",
+    logoText: "GL",
+    logoBg: "bg-[#00843D]",
+    logoColor: "text-white",
   },
   {
     slug: "campus-butchery",
@@ -130,6 +151,9 @@ export const shops: Shop[] = [
     rating: 4.4,
     verified: true,
     branch: "KCA Gate B",
+    logoText: "CB",
+    logoBg: "bg-[#8B1A1A]",
+    logoColor: "text-white",
   },
 ];
 

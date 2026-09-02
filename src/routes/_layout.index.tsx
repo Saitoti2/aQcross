@@ -9,11 +9,11 @@ import {
   ShoppingCart,
   SlidersHorizontal,
   ChevronDown,
-  Star,
   Clock,
 } from "lucide-react";
 import { categories, popularCategorySlugs, shops, products, allCategoriesIcon } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { ShopCard } from "@/components/shop/ShopLogo";
 
 export const Route = createFileRoute("/_layout/")({
   component: HomePage,
@@ -219,7 +219,7 @@ function HomePage() {
               </Link>
             </div>
             <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1">
-              {/* All Shops */}
+              {/* All Shops pill */}
               <button
                 type="button"
                 onClick={() => setActiveShop("all")}
@@ -227,33 +227,19 @@ function HomePage() {
                   activeShop === "all" ? "neu-pressed ring-2 ring-brand" : "neu neu-hover"
                 }`}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand">
                   <ShoppingCart className="h-6 w-6 text-white" aria-hidden="true" />
                 </div>
                 <span className="w-16 text-center text-xs font-semibold">All Shops</span>
               </button>
+              {/* Per-shop branded tiles */}
               {shops.map((shop) => (
-                <button
+                <ShopCard
                   key={shop.slug}
-                  type="button"
+                  shop={shop}
+                  active={activeShop === shop.slug}
                   onClick={() => setActiveShop(shop.slug)}
-                  className={`flex shrink-0 flex-col items-center gap-2 rounded-2xl p-3 transition-all ${
-                    activeShop === shop.slug ? "neu-pressed ring-2 ring-brand" : "neu neu-hover"
-                  }`}
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
-                    <span className="text-sm font-bold text-foreground">
-                      {shop.name.substring(0, 2)}
-                    </span>
-                  </div>
-                  <span className="w-16 text-center text-xs font-semibold leading-tight">
-                    {shop.name}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 fill-brand text-brand" aria-hidden="true" />
-                    <span className="text-[0.65rem] text-muted-foreground">{shop.rating}</span>
-                  </div>
-                </button>
+                />
               ))}
             </div>
           </div>

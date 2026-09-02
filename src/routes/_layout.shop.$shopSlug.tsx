@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { getShop, products, categories, getCategory } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { ShopLogo } from "@/components/shop/ShopLogo";
 
 export const Route = createFileRoute("/_layout/shop/$shopSlug")({
   component: ShopPage,
@@ -80,7 +81,9 @@ function ShopPage() {
       <div className="neu rounded-3xl p-5 sm:p-6">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-muted">
-            {CatIcon ? (
+            {shop ? (
+              <ShopLogo shop={shop} size="lg" />
+            ) : CatIcon ? (
               <CatIcon className="h-8 w-8 text-brand" aria-hidden="true" />
             ) : (
               <span className="text-xl font-bold text-foreground">

@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
@@ -125,8 +125,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
-  pendingComponent: SplashScreen,
-  pendingMs: 0,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
@@ -147,6 +145,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const [splash, setSplash] = useState(true);
+
+  useEffect(() => {
+    // Show splash for at least 1.4 s so the logo registers visually
+    const t = setTimeout(() => setSplash(false), 1400);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (splash) return <SplashScreen />;
 
   return (
     <QueryClientProvider client={queryClient}>
