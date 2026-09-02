@@ -92,6 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Order everyday essentials from verified local shops and get them delivered to your campus in 15–45 mins.",
       },
+      { property: "og:url", content: "https://aqcoss.co.ke" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "aQross" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -105,6 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "canonical", href: "https://aqcoss.co.ke" },
       {
         rel: "preconnect",
         href: "https://fonts.googleapis.com",
