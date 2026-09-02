@@ -1,32 +1,34 @@
 /**
- * aQross Service Worker
- * Strategy: Cache-first for the app shell.
- * Every navigation request gets the cached shell HTML instantly —
- * no browser loading UI, no blank screen, no network wait.
+ * aQross Service Worker v3
+ *
+ * Navigation strategy: NETWORK-FIRST with cache fallback.
+ *   - Every page load tries the network first so HTML is always fresh.
+ *   - If offline, serves the cached shell.
+ *   - This ensures the correct SplashScreen (no basket) is always shown.
+ *
+ * Static assets strategy: CACHE-FIRST (images, fonts, css, js).
  */
 
-const CACHE = "aqross-shell-v1";
+const CACHE = "aqross-shell-v3";   // ← bump this to bust all old caches
 
-// Assets to precache on install
 const PRECACHE = [
   "/",
   "/aQross logo-no bg.png",
   "/favicon.png",
-  "/3ce0b937-e727-4591-b5fa-8a8eac6f3d1b.png",
-  "/og-image.svg",
+  "/og-image.png",
 ];
 
-// ── Install: cache the shell immediately ──────────────────────────
+// ── Install ───────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
       .then((cache) => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting())   // activate immediately, don't wait
   );
 });
 
-// ── Activate: clean up old caches ────────────────────────────────
+// ── Activate: delete every cache that isn't the current version ───
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -34,11 +36,11 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
       )
-      .then(() => self.clients.claim())
+      .then(() => self.clients.claim())  // take control of all open tabs now
   );
 });
 
-// ── Fetch: serve shell instantly for navigations ─────────────────
+// ── Fetch ─────────────────────────────────────────────────────────
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -46,27 +48,35 @@ self.addEventListener("fetch", (event) => {
   // Only intercept same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // For HTML navigation requests: serve cached shell, fall back to network
+  // ── HTML navigations: network-first ──────────────────────────
+  // Always fetch fresh HTML so the app shell is never stale.
+  // Falls back to cache only when truly offline.
   if (request.mode === "navigate") {
     event.respondWith(
-      caches.match("/").then(
-        (cached) =>
-          cached ||
-          fetch(request).catch(
-            () =>
+      fetch(request)
+        .then((response) => {
+          // Cache the fresh shell for offline use
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put("/", clone));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match("/").then(
+            (cached) =>
+              cached ||
               new Response(offlineFallback(), {
                 headers: { "Content-Type": "text/html; charset=utf-8" },
               })
           )
-      )
+        )
     );
     return;
   }
 
-  // For static assets: cache-first with network fallback
-  if (
-    url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf|css|js)$/)
-  ) {
+  // ── Static assets: cache-first ───────────────────────────────
+  if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf|css|js)$/)) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
@@ -83,7 +93,7 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// ── Minimal offline fallback page ────────────────────────────────
+// ── Offline fallback page ─────────────────────────────────────────
 function offlineFallback() {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -92,30 +102,21 @@ function offlineFallback() {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>aQross</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Poppins', system-ui, sans-serif;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100dvh;
-      gap: 24px;
-      padding: 24px;
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Poppins',system-ui,sans-serif;
+      background:#fff;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      min-height:100dvh;gap:24px;padding:24px;
     }
-    img { height: 80px; width: auto; object-fit: contain; }
-    p { color: #888; font-size: 0.875rem; text-align: center; }
-    a {
-      margin-top: 8px;
-      display: inline-block;
-      background: #F4510B;
-      color: #fff;
-      padding: 10px 24px;
-      border-radius: 14px;
-      font-weight: 600;
-      font-size: 0.875rem;
-      text-decoration: none;
+    img{height:88px;width:auto;object-fit:contain;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    p{color:#888;font-size:.875rem;text-align:center;max-width:280px}
+    a{
+      display:inline-block;background:#F4510B;color:#fff;
+      padding:11px 28px;border-radius:14px;font-weight:600;
+      font-size:.875rem;text-decoration:none;margin-top:4px;
     }
   </style>
 </head>
