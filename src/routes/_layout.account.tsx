@@ -63,8 +63,8 @@ function AccountPage() {
             <h1 className="text-lg font-bold truncate">{user.name}</h1>
             <p className="truncate text-sm text-muted-foreground">{user.email}</p>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              {user.institution}
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
+              <span className="truncate">{user.institution}</span>
             </div>
           </div>
           <Link

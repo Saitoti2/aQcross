@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_layout")({
 
 function LayoutShell() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <AppHeader />
       <main className="flex-1">
         <Outlet />

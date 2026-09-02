@@ -26,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
           <Link
             to="/product/$productId"
             params={{ productId: product.id }}
-            className="text-sm font-semibold leading-snug hover:text-brand"
+            className="text-sm font-semibold leading-snug hover:text-brand line-clamp-2"
           >
             {product.name}
           </Link>

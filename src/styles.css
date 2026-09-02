@@ -12,6 +12,9 @@
   --font-sans: "Poppins", "Montserrat", "Nunito Sans", sans-serif;
   --font-display: "Poppins", sans-serif;
 
+  /* Extra-small breakpoint for very narrow phones (375px+) */
+  --breakpoint-xs: 23.4375rem; /* 375px */
+
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
@@ -85,6 +88,10 @@
 
   html {
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    /* support iOS safe areas (notch / home indicator) */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   body {
@@ -92,6 +99,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-weight: 400;
+    overflow-x: hidden;
   }
 
   h1,

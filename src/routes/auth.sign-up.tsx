@@ -28,10 +28,11 @@ function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
+    /* items-start + pt-10 so content isn't clipped when virtual keyboard opens */
+    <div className="flex min-h-screen flex-col items-center bg-background px-4 pb-10 pt-10 sm:justify-center">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex justify-center">
-          <Logo className="h-10" />
+          <Logo className="h-12" />
         </div>
 
         <div className="neu rounded-3xl p-6 sm:p-8">

@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { LocationProvider } from "../lib/location";
+import { SplashScreen } from "../components/brand/SplashScreen";
 
 function NotFoundComponent() {
   return (
@@ -124,6 +125,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
+  pendingComponent: SplashScreen,
+  pendingMs: 0,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });

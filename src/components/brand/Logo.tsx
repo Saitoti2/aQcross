@@ -6,6 +6,7 @@ export function Logo({ className = "h-9" }: { className?: string }) {
       <img
         src="/aQross logo-no bg.png"
         alt="aQross"
+        fetchPriority="high"
         className={`${className} w-auto object-contain`}
       />
     </Link>

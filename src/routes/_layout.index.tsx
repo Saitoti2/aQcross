@@ -184,12 +184,12 @@ function HomePage() {
                   <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
-              {/* Hero Basket */}
-              <div className="relative flex-shrink-0">
+              {/* Hero Basket — shrinks on narrow screens */}
+              <div className="relative flex max-w-[40%] shrink flex-col items-center sm:max-w-none sm:flex-shrink-0">
                 <img
                   src="/3ce0b937-e727-4591-b5fa-8a8eac6f3d1b.png"
                   alt="Shopping basket filled with everyday essentials"
-                  className="h-40 w-auto object-contain sm:h-52"
+                  className="h-28 w-auto object-contain sm:h-52"
                   loading="eager"
                 />
               </div>

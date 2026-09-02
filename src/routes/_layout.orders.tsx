@@ -137,11 +137,11 @@ function OrderCard({
     <div className="neu rounded-3xl p-5">
       {/* Order header */}
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-bold">Order #{order.id}</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-bold">Order #{order.id}</p>
           <p className="text-xs text-muted-foreground">{order.placedAt}</p>
           {shops.map((s) => (
-            <p key={s} className="text-xs text-muted-foreground">
+            <p key={s} className="truncate text-xs text-muted-foreground">
               {shopName(s)}
             </p>
           ))}
