@@ -9,50 +9,310 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutIndexRouteImport } from './routes/_layout.index'
+import { Route as LayoutAccountRouteImport } from './routes/_layout.account'
+import { Route as LayoutCartRouteImport } from './routes/_layout.cart'
+import { Route as LayoutCategoriesRouteImport } from './routes/_layout.categories'
+import { Route as LayoutCheckoutRouteImport } from './routes/_layout.checkout'
+import { Route as LayoutNotificationsRouteImport } from './routes/_layout.notifications'
+import { Route as LayoutOrdersRouteImport } from './routes/_layout.orders'
+import { Route as LayoutSearchRouteImport } from './routes/_layout.search'
+import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
+import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
+import { Route as LayoutProductProductIdRouteImport } from './routes/_layout.product.$productId'
+import { Route as LayoutShopShopSlugRouteImport } from './routes/_layout.shop.$shopSlug'
 
-const IndexRoute = IndexRouteImport.update({
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutAccountRoute = LayoutAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCartRoute = LayoutCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCategoriesRoute = LayoutCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCheckoutRoute = LayoutCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutNotificationsRoute = LayoutNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutOrdersRoute = LayoutOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutSearchRoute = LayoutSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/auth/sign-in',
+  path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/auth/sign-up',
+  path: '/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutProductProductIdRoute = LayoutProductProductIdRouteImport.update({
+  id: '/product/$productId',
+  path: '/product/$productId',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutShopShopSlugRoute = LayoutShopShopSlugRouteImport.update({
+  id: '/shop/$shopSlug',
+  path: '/shop/$shopSlug',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof LayoutIndexRoute
+  '/account': typeof LayoutAccountRoute
+  '/cart': typeof LayoutCartRoute
+  '/categories': typeof LayoutCategoriesRoute
+  '/checkout': typeof LayoutCheckoutRoute
+  '/notifications': typeof LayoutNotificationsRoute
+  '/orders': typeof LayoutOrdersRoute
+  '/search': typeof LayoutSearchRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/product/$productId': typeof LayoutProductProductIdRoute
+  '/shop/$shopSlug': typeof LayoutShopShopSlugRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/account': typeof LayoutAccountRoute
+  '/cart': typeof LayoutCartRoute
+  '/categories': typeof LayoutCategoriesRoute
+  '/checkout': typeof LayoutCheckoutRoute
+  '/notifications': typeof LayoutNotificationsRoute
+  '/orders': typeof LayoutOrdersRoute
+  '/search': typeof LayoutSearchRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/': typeof LayoutIndexRoute
+  '/product/$productId': typeof LayoutProductProductIdRoute
+  '/shop/$shopSlug': typeof LayoutShopShopSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/account': typeof LayoutAccountRoute
+  '/_layout/cart': typeof LayoutCartRoute
+  '/_layout/categories': typeof LayoutCategoriesRoute
+  '/_layout/checkout': typeof LayoutCheckoutRoute
+  '/_layout/notifications': typeof LayoutNotificationsRoute
+  '/_layout/orders': typeof LayoutOrdersRoute
+  '/_layout/search': typeof LayoutSearchRoute
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/_layout/': typeof LayoutIndexRoute
+  '/_layout/product/$productId': typeof LayoutProductProductIdRoute
+  '/_layout/shop/$shopSlug': typeof LayoutShopShopSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/cart'
+    | '/categories'
+    | '/checkout'
+    | '/notifications'
+    | '/orders'
+    | '/search'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/product/$productId'
+    | '/shop/$shopSlug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/account'
+    | '/cart'
+    | '/categories'
+    | '/checkout'
+    | '/notifications'
+    | '/orders'
+    | '/search'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/'
+    | '/product/$productId'
+    | '/shop/$shopSlug'
+  id:
+    | '__root__'
+    | '/_layout'
+    | '/_layout/account'
+    | '/_layout/cart'
+    | '/_layout/categories'
+    | '/_layout/checkout'
+    | '/_layout/notifications'
+    | '/_layout/orders'
+    | '/_layout/search'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/_layout/'
+    | '/_layout/product/$productId'
+    | '/_layout/shop/$shopSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  LayoutRoute: typeof LayoutRouteWithChildren
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/account': {
+      id: '/_layout/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof LayoutAccountRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/cart': {
+      id: '/_layout/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof LayoutCartRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/categories': {
+      id: '/_layout/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof LayoutCategoriesRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/checkout': {
+      id: '/_layout/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof LayoutCheckoutRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/notifications': {
+      id: '/_layout/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof LayoutNotificationsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/orders': {
+      id: '/_layout/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof LayoutOrdersRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/search': {
+      id: '/_layout/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof LayoutSearchRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/auth/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/auth/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_layout/product/$productId': {
+      id: '/_layout/product/$productId'
+      path: '/product/$productId'
+      fullPath: '/product/$productId'
+      preLoaderRoute: typeof LayoutProductProductIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/shop/$shopSlug': {
+      id: '/_layout/shop/$shopSlug'
+      path: '/shop/$shopSlug'
+      fullPath: '/shop/$shopSlug'
+      preLoaderRoute: typeof LayoutShopShopSlugRouteImport
+      parentRoute: typeof LayoutRoute
     }
   }
 }
 
+interface LayoutRouteChildren {
+  LayoutAccountRoute: typeof LayoutAccountRoute
+  LayoutCartRoute: typeof LayoutCartRoute
+  LayoutCategoriesRoute: typeof LayoutCategoriesRoute
+  LayoutCheckoutRoute: typeof LayoutCheckoutRoute
+  LayoutNotificationsRoute: typeof LayoutNotificationsRoute
+  LayoutOrdersRoute: typeof LayoutOrdersRoute
+  LayoutSearchRoute: typeof LayoutSearchRoute
+  LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutProductProductIdRoute: typeof LayoutProductProductIdRoute
+  LayoutShopShopSlugRoute: typeof LayoutShopShopSlugRoute
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutAccountRoute: LayoutAccountRoute,
+  LayoutCartRoute: LayoutCartRoute,
+  LayoutCategoriesRoute: LayoutCategoriesRoute,
+  LayoutCheckoutRoute: LayoutCheckoutRoute,
+  LayoutNotificationsRoute: LayoutNotificationsRoute,
+  LayoutOrdersRoute: LayoutOrdersRoute,
+  LayoutSearchRoute: LayoutSearchRoute,
+  LayoutIndexRoute: LayoutIndexRoute,
+  LayoutProductProductIdRoute: LayoutProductProductIdRoute,
+  LayoutShopShopSlugRoute: LayoutShopShopSlugRoute,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  LayoutRoute: LayoutRouteWithChildren,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

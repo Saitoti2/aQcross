@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Clock, Minus, Plus, ShieldCheck, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { kes } from "@/lib/format";
-import { shopName, type Product } from "@/lib/data";
+import { shopName, categories, type Product } from "@/lib/data";
 import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -104,7 +104,6 @@ export function ProductCard({ product }: { product: Product }) {
 }
 
 export function ProductThumb({ product, size = 640 }: { product: Product; size?: number }) {
-  const { categories } = require("@/lib/data") as typeof import("@/lib/data");
   const category = categories.find((c) => c.slug === product.category);
   if (category?.image) {
     return (
