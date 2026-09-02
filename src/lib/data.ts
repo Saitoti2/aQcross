@@ -74,12 +74,14 @@ export type Shop = {
   rating: number;
   verified: boolean;
   branch: string;
-  /** Short branded text shown inside the logo tile, e.g. "QM" */
+  /** Short branded text shown as fallback if logo image fails */
   logoText: string;
   /** Tailwind bg class for the logo tile */
   logoBg: string;
   /** Tailwind text class for the logo text */
   logoColor: string;
+  /** Path to logo image in /public/shops/ */
+  logoUrl: string;
 };
 
 export const shops: Shop[] = [
@@ -94,6 +96,7 @@ export const shops: Shop[] = [
     logoText: "QM",
     logoBg: "bg-[#E31837]",
     logoColor: "text-white",
+    logoUrl: "/shops/quickmart.jpg",
   },
   {
     slug: "chandarana",
@@ -106,6 +109,7 @@ export const shops: Shop[] = [
     logoText: "CH",
     logoBg: "bg-[#00529B]",
     logoColor: "text-white",
+    logoUrl: "/shops/chandarana.jpg",
   },
   {
     slug: "naivas",
@@ -118,6 +122,7 @@ export const shops: Shop[] = [
     logoText: "NV",
     logoBg: "bg-[#FF6B00]",
     logoColor: "text-white",
+    logoUrl: "/shops/naivas.jpg",
   },
   {
     slug: "carrefour",
@@ -130,6 +135,7 @@ export const shops: Shop[] = [
     logoText: "CA",
     logoBg: "bg-[#004F9F]",
     logoColor: "text-white",
+    logoUrl: "/shops/carrefour.jpg",
   },
   {
     slug: "goodlife-pharmacy",
@@ -142,6 +148,7 @@ export const shops: Shop[] = [
     logoText: "GL",
     logoBg: "bg-[#00843D]",
     logoColor: "text-white",
+    logoUrl: "/shops/goodlife.jpg",
   },
   {
     slug: "campus-butchery",
@@ -154,6 +161,7 @@ export const shops: Shop[] = [
     logoText: "CB",
     logoBg: "bg-[#8B1A1A]",
     logoColor: "text-white",
+    logoUrl: "/shops/campus-butchery.jpg",
   },
 ];
 
