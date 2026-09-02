@@ -81,6 +81,45 @@
   --neu-light: 255 255 255 / 92%;
 }
 
+/* ── Dark mode ─────────────────────────────────────────────────────────────── */
+/* Applied via .dark class on <html>. Primary background is pure black.        */
+/* Neumorphic shadows invert: dark shadow deeper, no white highlight.          */
+html.dark {
+  --background: oklch(0.08 0 0);        /* #111 — near-black */
+  --surface:    oklch(0.12 0 0);        /* #1c1c1c — elevated surface */
+  --card:       oklch(0.13 0 0);        /* #1f1f1f — card bg */
+  --card-foreground: oklch(0.93 0 0);
+
+  --foreground: oklch(0.93 0 0);        /* near-white text */
+  --popover:    oklch(0.13 0 0);
+  --popover-foreground: oklch(0.93 0 0);
+
+  /* Brand orange unchanged — pops beautifully on dark */
+  --brand: oklch(0.65 0.201 41.3);
+  --brand-foreground: oklch(1 0 0);
+
+  --primary: oklch(0.65 0.201 41.3);
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary:            oklch(0.18 0 0);
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted:                oklch(0.18 0 0);
+  --muted-foreground:     oklch(0.55 0 0);
+  --accent:               oklch(0.20 0 0);
+  --accent-foreground:    oklch(0.65 0.201 41.3);
+
+  --destructive:          oklch(0.55 0.16 25);
+  --destructive-foreground: oklch(1 0 0);
+
+  --border: oklch(0.22 0 0);
+  --input:  oklch(0.18 0 0);
+  --ring:   oklch(0.65 0.201 41.3);
+
+  /* Dark neumorphic shadows: dark surface → deeper cavity + lighter lift */
+  --neu-dark:  0 0 0 / 55%;
+  --neu-light: 255 255 255 / 4%;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -131,22 +170,22 @@
 @utility neu-sm {
   background-color: var(--card);
   box-shadow:
-    3px 3px 8px rgb(0 0 0 / 5%),
-    -3px -3px 8px rgb(255 255 255 / 90%);
+    3px 3px 8px rgb(var(--neu-dark)),
+    -3px -3px 8px rgb(var(--neu-light));
 }
 
 @utility neu-lg {
   background-color: var(--card);
   box-shadow:
-    10px 10px 28px rgb(0 0 0 / 6%),
-    -10px -10px 28px rgb(255 255 255 / 95%);
+    10px 10px 28px rgb(var(--neu-dark)),
+    -10px -10px 28px rgb(var(--neu-light));
 }
 
 @utility neu-pressed {
   background-color: var(--card);
   box-shadow:
-    inset 3px 3px 8px rgb(0 0 0 / 6%),
-    inset -3px -3px 8px rgb(255 255 255 / 90%);
+    inset 3px 3px 8px rgb(var(--neu-dark)),
+    inset -3px -3px 8px rgb(var(--neu-light));
 }
 
 @utility neu-hover {
@@ -155,8 +194,8 @@
     transform 200ms ease;
   &:hover {
     box-shadow:
-      12px 12px 26px rgb(0 0 0 / 7%),
-      -12px -12px 26px rgb(255 255 255 / 95%);
+      12px 12px 26px rgb(var(--neu-dark)),
+      -12px -12px 26px rgb(var(--neu-light));
     transform: translateY(-2px);
   }
 }

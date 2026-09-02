@@ -140,6 +140,12 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* Inline script: apply dark class before first paint to avoid flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('aqross-theme');if(t==='dark'||(t===null&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
       </head>
       <body>
         {/*
@@ -153,7 +159,7 @@ function RootShell({ children }: { children: ReactNode }) {
             position: "fixed",
             inset: 0,
             zIndex: 9999,
-            background: "#ffffff",
+            background: "var(--color-background, #ffffff)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

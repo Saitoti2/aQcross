@@ -1,13 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, ChevronDown, MapPin, ShoppingCart } from "lucide-react";
+import { Bell, ChevronDown, MapPin, Moon, ShoppingCart, Sun } from "lucide-react";
 import { useState } from "react";
 import { useDeliveryLocation } from "@/lib/location";
 import { useCart } from "@/lib/cart";
+import { useTheme } from "@/hooks/use-theme";
 
 export function AppHeader() {
   const { location, setLocation, options } = useDeliveryLocation();
   const [open, setOpen] = useState(false);
   const { count } = useCart();
+  const { isDark, toggle } = useTheme();
 
   return (
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm">
@@ -75,6 +77,20 @@ export function AppHeader() {
               </ul>
             )}
           </div>
+
+          {/* ── Theme toggle ─────────────────────────────────────── */}
+          <button
+            type="button"
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={toggle}
+            className="neu neu-hover relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:h-13 sm:w-13"
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5 text-brand" aria-hidden="true" />
+            ) : (
+              <Moon className="h-5 w-5 text-foreground" aria-hidden="true" />
+            )}
+          </button>
 
           {/* ── Cart ─────────────────────────────────────────────── */}
           <Link
