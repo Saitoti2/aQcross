@@ -107,8 +107,8 @@ function HomePage() {
       <div className="mt-6 flex items-start gap-5">
 
         {/* Left Category Sidebar — sticky, persists while content scrolls */}
-        <aside className="no-scrollbar sticky top-[76px] hidden w-48 shrink-0 overflow-y-auto lg:block"
-               style={{ maxHeight: "calc(100vh - 96px)" }}>
+        <aside className="no-scrollbar sticky top-[72px] hidden w-48 shrink-0 overflow-y-auto lg:block"
+               style={{ maxHeight: "calc(100vh - 88px)" }}>
           <div className="neu rounded-3xl p-3">
             <h2 className="mb-2 px-2 pt-1 text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
               Categories

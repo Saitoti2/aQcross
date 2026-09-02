@@ -8,9 +8,9 @@ export const Route = createFileRoute("/_layout")({
 
 function LayoutShell() {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
+    <div className="flex min-h-screen flex-col bg-background" style={{ overflowX: "clip" }}>
       <AppHeader />
-      <main className="flex-1">
+      <main className="flex min-h-0 flex-1 flex-col">
         <Outlet />
       </main>
       <BottomNav />

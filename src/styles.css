@@ -88,7 +88,7 @@
 
   html {
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    overflow-x: clip;
     /* support iOS safe areas (notch / home indicator) */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -99,7 +99,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-weight: 400;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   h1,
