@@ -104,61 +104,64 @@ function HomePage() {
       </div>
 
       {/* Main layout: sidebar + content */}
-      <div className="mt-6 flex gap-5">
+      <div className="mt-6 flex items-start gap-5">
 
-        {/* Left Category Sidebar */}
-        <aside className="hidden w-48 shrink-0 lg:block">
-          <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            Categories
-          </h2>
-          <ul className="flex flex-col gap-2">
-            <li>
-              <button
-                type="button"
-                onClick={() => setActiveCategory("all")}
-                className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all ${
-                  activeCategory === "all"
-                    ? "bg-brand text-brand-foreground"
-                    : "neu neu-hover text-foreground"
-                }`}
-              >
-                <AllIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                All Categories
-              </button>
-            </li>
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              const active = activeCategory === cat.slug;
-              return (
-                <li key={cat.slug}>
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory(cat.slug)}
-                    className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-medium transition-all ${
-                      active
-                        ? "bg-brand text-brand-foreground"
-                        : "neu neu-hover text-foreground hover:text-brand"
-                    }`}
-                  >
-                    <Icon
-                      className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-brand"}`}
-                      aria-hidden="true"
-                    />
-                    {cat.name}
-                  </button>
-                </li>
-              );
-            })}
-            <li>
-              <Link
-                to="/categories"
-                className="neu neu-hover flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold text-brand"
-              >
-                <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                View All
-              </Link>
-            </li>
-          </ul>
+        {/* Left Category Sidebar — sticky, persists while content scrolls */}
+        <aside className="no-scrollbar sticky top-[76px] hidden w-48 shrink-0 overflow-y-auto lg:block"
+               style={{ maxHeight: "calc(100vh - 96px)" }}>
+          <div className="neu rounded-3xl p-3">
+            <h2 className="mb-2 px-2 pt-1 text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
+              Categories
+            </h2>
+            <ul className="flex flex-col gap-1">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setActiveCategory("all")}
+                  className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all ${
+                    activeCategory === "all"
+                      ? "bg-brand text-brand-foreground shadow-sm"
+                      : "hover:bg-muted/60 text-foreground"
+                  }`}
+                >
+                  <AllIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  All Categories
+                </button>
+              </li>
+              {categories.map((cat) => {
+                const Icon = cat.icon;
+                const active = activeCategory === cat.slug;
+                return (
+                  <li key={cat.slug}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveCategory(cat.slug)}
+                      className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-medium transition-all ${
+                        active
+                          ? "bg-brand text-brand-foreground shadow-sm"
+                          : "hover:bg-muted/60 text-foreground hover:text-brand"
+                      }`}
+                    >
+                      <Icon
+                        className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-brand"}`}
+                        aria-hidden="true"
+                      />
+                      {cat.name}
+                    </button>
+                  </li>
+                );
+              })}
+              <li className="mt-1 border-t border-border pt-1">
+                <Link
+                  to="/categories"
+                  className="flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold text-brand hover:bg-muted/60 transition-all"
+                >
+                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  View All
+                </Link>
+              </li>
+            </ul>
+          </div>
         </aside>
 
         {/* Right Content */}
