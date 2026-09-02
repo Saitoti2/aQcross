@@ -21,7 +21,7 @@ OUT  = os.path.join(ROOT, "public", "og-image.png")
 W, H = 1200, 630
 BRAND   = (244, 81,  11)
 WHITE   = (255, 255, 255)
-SURFACE = (248, 248, 248)
+SURFACE = (255, 255, 255)   # pure white — no tint
 DARK    = ( 30,  30,  30)
 MUTED   = (136, 136, 136)
 LIGHT   = (245, 245, 245)
@@ -155,30 +155,6 @@ for y in range(100, 540, 10):
 # ── LEFT COLUMN ──────────────────────────────────────────────────────────────
 LEFT_X = 90
 
-# ── Translucent orange veil — sweeping diagonal wash across entire left half ─
-# Build at small size, blur heavily, scale up for a smooth cinematic look
-VEIL_W, VEIL_H = 80, 60
-veil_tile = Image.new("RGBA", (VEIL_W, VEIL_H), (0, 0, 0, 0))
-vt = veil_tile.load()
-for row in range(VEIL_H):
-    for col in range(VEIL_W):
-        # radial from top-left corner, smooth falloff
-        nx = col / VEIL_W   # 0→1 left to right
-        ny = row / VEIL_H   # 0→1 top to bottom
-        # elliptical distance from top-left origin
-        dist = (nx ** 1.8 + ny ** 1.8) ** (1 / 1.8)
-        a = int(90 * max(0.0, 1.0 - dist) ** 1.6)
-        vt[col, row] = (*BRAND, max(0, a))
-
-# Scale to cover the whole left column of the card
-veil_scaled = veil_tile.resize((560, 560), Image.LANCZOS)
-# Blur for silky smooth transition
-veil_scaled = veil_scaled.filter(ImageFilter.GaussianBlur(14))
-logo_veil   = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-logo_veil.paste(veil_scaled, (CX + 4, CY + 4))
-canvas = Image.alpha_composite(canvas, logo_veil)
-draw = ImageDraw.Draw(canvas)
-
 # Logo — large: up to 420 × 130
 logo_path = os.path.join(ROOT, "public", "aQross logo-no bg.png")
 if os.path.isfile(logo_path):
@@ -189,7 +165,8 @@ if os.path.isfile(logo_path):
     canvas.paste(logo, (LEFT_X, logo_y), logo)
     logo_bottom = logo_y + lh
 else:
-    draw.text((LEFT_X, 118), "aQross", font=fnt(FONT_BOLD, 60), fill=(*BRAND, 255))
+    f_logo_fb = fnt(FONT_BOLD, 60)
+    draw.text((LEFT_X, 118), "aQross", font=f_logo_fb, fill=(*BRAND, 255))
     logo_bottom = 192
 
 # Divider line
@@ -218,53 +195,19 @@ stat_y = logo_bottom + 174
 for i, (l1, l2) in enumerate([("15–45 min", "Delivery"), ("Student", "Deals"), ("Verified", "Shops")]):
     draw_stat(canvas, LEFT_X + i * 118, stat_y, l1, l2, f_stat_b, f_stat_r)
 
-# ── RIGHT COLUMN: basket with orange veil ────────────────────────────────────
-RCX, RCY = 870, 310   # right column centre
+# ── RIGHT COLUMN: basket, clean white bg, no gradients ───────────────────────
+RCX, RCY = 880, 315
 
-# ── Translucent orange veil — large soft ellipse bleeding from top-right ──────
-# Mimics the hero banner reference: warm orange wash behind the basket,
-# fading smoothly into white toward the left and bottom edges.
-VEIL2_W, VEIL2_H = 80, 80
-veil2_tile = Image.new("RGBA", (VEIL2_W, VEIL2_H), (0, 0, 0, 0))
-v2 = veil2_tile.load()
-for row in range(VEIL2_H):
-    for col in range(VEIL2_W):
-        # origin at top-right; fade toward bottom-left
-        nx = 1.0 - col / VEIL2_W   # 1 at right, 0 at left
-        ny = 1.0 - row / VEIL2_H   # 1 at top,   0 at bottom
-        # elliptical: wider horizontally
-        dist = ((1 - nx) ** 2.2 + (1 - ny) ** 2.2) ** 0.5
-        a = int(100 * max(0.0, 1.0 - dist) ** 1.4)
-        v2[col, row] = (*BRAND, max(0, a))
-
-veil2_scaled = veil2_tile.resize((560, 500), Image.LANCZOS)
-veil2_scaled = veil2_scaled.filter(ImageFilter.GaussianBlur(18))
-basket_veil  = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-# Position: top-right of the card
-basket_veil.paste(veil2_scaled, (W - 560, CY))
-canvas = Image.alpha_composite(canvas, basket_veil)
-draw = ImageDraw.Draw(canvas)
-
-# Basket image — larger, sits on top of the veil
+# Basket image — large, centred in right half
 basket_path = os.path.join(ROOT, "public", "3ce0b937-e727-4591-b5fa-8a8eac6f3d1b.png")
 if os.path.isfile(basket_path):
     basket = Image.open(basket_path).convert("RGBA")
-    basket.thumbnail((340, 310), Image.LANCZOS)
+    # Fill most of the right column height
+    basket.thumbnail((460, 440), Image.LANCZOS)
     bw, bh = basket.size
-    bx = RCX - bw // 2 + 20
-    by = RCY - bh // 2 - 20
+    bx = RCX - bw // 2
+    by = RCY - bh // 2
     canvas.paste(basket, (bx, by), basket)
-
-# Soft bottom-white veil so basket dissolves into card background
-bottom_veil = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-bvd = ImageDraw.Draw(bottom_veil)
-fade_top = by + bh - 60
-for row in range(90):
-    a = int(220 * (row / 90) ** 1.8)
-    y_pos = fade_top + row
-    if 0 <= y_pos < H:
-        bvd.line([(600, y_pos), (W - 40, y_pos)], fill=(*SURFACE, a))
-canvas = Image.alpha_composite(canvas, bottom_veil)
 draw = ImageDraw.Draw(canvas)
 
 # ── Bottom domain strip ───────────────────────────────────────────────────────
