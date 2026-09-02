@@ -96,12 +96,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:url", content: "https://aqcoss.co.ke" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "aQross" },
+      { property: "og:image", content: "https://aqcoss.co.ke/og-image.svg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "aQross — Shop & Delivery for Students" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "aQross — Shop & Delivery for Students" },
       {
         name: "twitter:description",
         content: "Groceries, stationery, pharmaceuticals and more, delivered to your campus.",
       },
+      { name: "twitter:image", content: "https://aqcoss.co.ke/og-image.svg" },
+      { name: "twitter:image:alt", content: "aQross — Shop & Delivery for Students" },
       { name: "theme-color", content: "#F4510B" },
     ],
     links: [
@@ -138,6 +144,20 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Scripts />
+        {/* Register service worker — intercepts every navigation so the
+            cached shell loads instantly, bypassing the browser loading UI */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .catch(function(e) { console.warn('SW registration failed:', e); });
+  });
+}
+`,
+          }}
+        />
       </body>
     </html>
   );
