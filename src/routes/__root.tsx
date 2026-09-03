@@ -76,6 +76,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Read the theme cookie on every SSR request so the server emits
+  // the correct html class — eliminates any hydration mismatch.
+  loader: () => ({}),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -137,9 +140,57 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning prevents React from warning/re-rendering when
+    // the inline theme script adds "dark" to <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/*
+         * THEME INIT — runs synchronously before any paint.
+         * On first visit (no cookie yet): reads OS preference via matchMedia
+         * and sets html.dark immediately.
+         * On subsequent visits: the server already emitted the correct class
+         * from the cookie, so this script is a fast no-op for returning users.
+         * Also writes a cookie so the server can read it on the next request.
+         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  try {
+    var k = 'aqross-theme';
+    var stored = localStorage.getItem(k);
+    var dark = stored === 'dark' || (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    // Apply class (server may have already set it; this is idempotent)
+    if (dark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    // Write cookie so the server knows on the next request
+    var cookieVal = dark ? 'dark' : 'light';
+    document.cookie = k + '=' + cookieVal + ';path=/;max-age=31536000;SameSite=Lax';
+    // Persist to localStorage too
+    try { localStorage.setItem(k, cookieVal); } catch(_) {}
+  } catch(e) {}
+})();`,
+          }}
+        />
+        {/*
+         * Splash dark-mode overrides — parsed after the script above,
+         * so html.dark is already correct when these rules apply.
+         */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              #aqross-splash { background: #ffffff; }
+              html.dark #aqross-splash { background: #030712; }
+              #aqross-splash-logo-light { display: block; }
+              #aqross-splash-logo-dark  { display: none; }
+              html.dark #aqross-splash-logo-light { display: none; }
+              html.dark #aqross-splash-logo-dark  { display: block; }
+            `,
+          }}
+        />
       </head>
       <body>
         {/*
@@ -153,7 +204,6 @@ function RootShell({ children }: { children: ReactNode }) {
             position: "fixed",
             inset: 0,
             zIndex: 9999,
-            background: "#ffffff",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -161,10 +211,19 @@ function RootShell({ children }: { children: ReactNode }) {
             gap: "24px",
           }}
         >
+          {/* Light logo */}
           <img
+            id="aqross-splash-logo-light"
             src="/aQross logo-no bg.png"
             alt="aQross"
             style={{ height: "96px", width: "auto", objectFit: "contain" }}
+          />
+          {/* Dark logo */}
+          <img
+            id="aqross-splash-logo-dark"
+            src="/shops/aQross logo - Dark mode.png"
+            alt="aQross"
+            style={{ height: "96px", width: "auto", objectFit: "contain", mixBlendMode: "screen" }}
           />
           <p
             style={{
