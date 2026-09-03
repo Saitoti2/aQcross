@@ -24,15 +24,19 @@ const items = [
   },
 ] as const;
 
+/**
+ * Primary navigation below the lg breakpoint, where the sidebar rail is
+ * hidden. On desktop the sidebar takes over and this is not rendered.
+ */
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     /* Full-width background bar handles wide screens; inner content is capped */
-    <div className="sticky bottom-0 z-20 w-full bg-background/95 backdrop-blur-sm">
+    <div className="sticky bottom-0 z-20 w-full bg-background/95 backdrop-blur-sm lg:hidden">
       <nav
         aria-label="Primary"
-        className="mx-auto w-full max-w-[1240px] px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 sm:px-6 sm:pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
+        className="mx-auto w-full max-w-[1440px] px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 sm:px-6 sm:pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
       >
         <ul className="neu-lg grid grid-cols-5 rounded-3xl px-1 py-2 sm:px-2 sm:py-3">
           {items.map((item) => {

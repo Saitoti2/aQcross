@@ -62,7 +62,7 @@ function OrdersPage() {
   const past = demoOrders.filter((o) => o.status === "delivered" || o.status === "cancelled");
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
+    <div className="w-full pt-5">
       <h1 className="mb-6 text-2xl font-bold">My Orders</h1>
 
       {demoOrders.length === 0 && (

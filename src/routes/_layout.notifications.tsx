@@ -53,7 +53,7 @@ function NotificationsPage() {
   const read = notifications.filter((n) => n.read);
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
+    <div className="w-full pt-5">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Notifications</h1>
         {unread.length > 0 && (

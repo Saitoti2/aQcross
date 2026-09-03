@@ -15,7 +15,7 @@ function CartPage() {
 
   if (count === 0) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-[1240px] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <div className="neu flex h-24 w-24 items-center justify-center rounded-full">
           <ShoppingCart className="h-10 w-10 text-muted-foreground/40" aria-hidden="true" />
         </div>
@@ -34,7 +34,7 @@ function CartPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
+    <div className="w-full pt-5">
       <div className="mb-5 flex items-center justify-between">
         <h1 className="text-2xl font-bold">
           Your Cart

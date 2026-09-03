@@ -14,7 +14,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm">
-      <div className="mx-auto w-full max-w-[1240px] px-3 py-2.5 sm:px-6 sm:py-3">
+      <div className="mx-auto w-full max-w-[1440px] px-3 py-2.5 sm:px-6 sm:py-3">
         <div className="flex items-center gap-2 sm:gap-3">
           {/* ── Logo ─────────────────────────────────────────────── */}
           {/* Large, visually prominent pill — the brand anchor */}

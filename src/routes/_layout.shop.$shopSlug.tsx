@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Star, Clock, ShieldCheck, ChevronLeft, SlidersHorizontal, Tag } from "lucide-react";
 import { getShop, products, categories, getCategory } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ShopLogo } from "@/components/shop/ShopLogo";
+import { Pagination, usePagination } from "@/components/shop/Pagination";
+
+const PER_PAGE = 12;
 
 export const Route = createFileRoute("/_layout/shop/$shopSlug")({
   component: ShopPage,
@@ -22,16 +25,20 @@ function ShopPage() {
   // If slug matches a category, show products for that category across all shops
   const cat = getCategory(slug);
 
-  const shopProducts = products.filter((p) => {
-    if (shop) {
-      if (p.shop !== shop.slug) return false;
-    } else if (cat) {
-      if (p.category !== cat.slug) return false;
-    }
-    if (activeCategory !== "all" && p.category !== activeCategory) return false;
-    if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
-    return true;
-  });
+  const shopProducts = useMemo(
+    () =>
+      products.filter((p) => {
+        if (shop) {
+          if (p.shop !== shop.slug) return false;
+        } else if (cat) {
+          if (p.category !== cat.slug) return false;
+        }
+        if (activeCategory !== "all" && p.category !== activeCategory) return false;
+        if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
+        return true;
+      }),
+    [shop, cat, activeCategory, offersOnly],
+  );
 
   const availableCategories = [
     ...new Set(
@@ -43,9 +50,16 @@ function ShopPage() {
     .map((s) => categories.find((c) => c.slug === s))
     .filter(Boolean) as typeof categories;
 
+  // Must run before the not-found early return below — hooks cannot be conditional.
+  const { page, pageCount, pageItems, goToPage, total, rangeStart, rangeEnd } = usePagination(
+    shopProducts,
+    PER_PAGE,
+    `${slug}|${activeCategory}|${offersOnly}`,
+  );
+
   if (!shop && !cat) {
     return (
-      <div className="mx-auto max-w-[1240px] px-4 py-12 text-center sm:px-6">
+      <div className="py-12 text-center">
         <p className="text-lg font-semibold text-muted-foreground">Store not found</p>
         <Link to="/" className="mt-4 inline-block text-sm font-semibold text-brand">
           Back to Home
@@ -58,7 +72,7 @@ function ShopPage() {
   const CatIcon = cat?.icon;
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 sm:px-6">
+    <div className="w-full">
       {/* Back */}
       <div className="py-4">
         <Link
@@ -189,11 +203,22 @@ function ShopPage() {
             <p className="font-semibold text-muted-foreground">No products match your filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {shopProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {pageItems.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+            <Pagination
+              page={page}
+              pageCount={pageCount}
+              onPageChange={goToPage}
+              rangeStart={rangeStart}
+              rangeEnd={rangeEnd}
+              total={total}
+              label="products"
+            />
+          </>
         )}
       </div>
     </div>

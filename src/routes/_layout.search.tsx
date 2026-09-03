@@ -3,10 +3,13 @@ import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X, Tag } from "lucide-react";
 import { products, categories, shops } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { Pagination, usePagination } from "@/components/shop/Pagination";
 
 export const Route = createFileRoute("/_layout/search")({
   component: SearchPage,
 });
+
+const PER_PAGE = 12;
 
 function SearchPage() {
   const [query, setQuery] = useState("");
@@ -35,6 +38,12 @@ function SearchPage() {
 
   const hasFilters = activeCategory !== "all" || activeShop !== "all" || offersOnly || inStockOnly;
 
+  const { page, pageCount, pageItems, goToPage, total, rangeStart, rangeEnd } = usePagination(
+    results,
+    PER_PAGE,
+    `${query}|${activeCategory}|${activeShop}|${offersOnly}|${inStockOnly}`,
+  );
+
   function clearFilters() {
     setActiveCategory("all");
     setActiveShop("all");
@@ -43,7 +52,7 @@ function SearchPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 sm:px-6">
+    <div className="w-full">
       {/* Search input */}
       <div className="sticky top-0 z-10 bg-background pb-3 pt-5">
         <div className="flex gap-3">
@@ -215,11 +224,22 @@ function SearchPage() {
 
       {/* Results grid */}
       {results.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {results.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {pageItems.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            onPageChange={goToPage}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            total={total}
+            label="results"
+          />
+        </>
       )}
     </div>
   );

@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronRight, Tag, ShoppingCart, ChevronDown, Clock, X } from "lucide-react";
-import { categories, popularCategorySlugs, shops, products, allCategoriesIcon } from "@/lib/data";
+import { categories, popularCategorySlugs, shops, products } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
-import { ShopCard } from "@/components/shop/ShopLogo";
+import { AllShopsCard, ShopCard } from "@/components/shop/ShopLogo";
+import { Pagination, usePagination } from "@/components/shop/Pagination";
 
 export const Route = createFileRoute("/_layout/")({
   component: HomePage,
@@ -13,8 +14,9 @@ export const Route = createFileRoute("/_layout/")({
 const sortOptions = ["Relevance", "Price: Low to High", "Price: High to Low", "Newest"];
 const priceOptions = ["Any Price", "Under KES 200", "KES 200–500", "KES 500–1000", "Over KES 1000"];
 
+const PER_PAGE = 12;
+
 function HomePage() {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [activeShop, setActiveShop] = useState("all");
   const [sortBy, setSortBy] = useState("Relevance");
   const [priceFilter, setPriceFilter] = useState("Any Price");
@@ -26,28 +28,34 @@ function HomePage() {
     .map((s) => categories.find((c) => c.slug === s))
     .filter(Boolean) as typeof categories;
 
-  // Filtered products
-  const filtered = products
-    .filter((p) => {
-      if (activeCategory !== "all" && p.category !== activeCategory) return false;
-      if (activeShop !== "all" && p.shop !== activeShop) return false;
-      if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
-      if (priceFilter === "Under KES 200" && p.price >= 200) return false;
-      if (priceFilter === "KES 200–500" && (p.price < 200 || p.price > 500)) return false;
-      if (priceFilter === "KES 500–1000" && (p.price < 500 || p.price > 1000)) return false;
-      if (priceFilter === "Over KES 1000" && p.price <= 1000) return false;
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortBy === "Price: Low to High") return a.price - b.price;
-      if (sortBy === "Price: High to Low") return b.price - a.price;
-      return 0;
-    });
+  const filtered = useMemo(
+    () =>
+      products
+        .filter((p) => {
+          if (activeShop !== "all" && p.shop !== activeShop) return false;
+          if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
+          if (priceFilter === "Under KES 200" && p.price >= 200) return false;
+          if (priceFilter === "KES 200–500" && (p.price < 200 || p.price > 500)) return false;
+          if (priceFilter === "KES 500–1000" && (p.price < 500 || p.price > 1000)) return false;
+          if (priceFilter === "Over KES 1000" && p.price <= 1000) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          if (sortBy === "Price: Low to High") return a.price - b.price;
+          if (sortBy === "Price: High to Low") return b.price - a.price;
+          return 0;
+        }),
+    [activeShop, offersOnly, priceFilter, sortBy],
+  );
 
-  const AllIcon = allCategoriesIcon;
+  const { page, pageCount, pageItems, goToPage, total, rangeStart, rangeEnd } = usePagination(
+    filtered,
+    PER_PAGE,
+    `${activeShop}|${sortBy}|${priceFilter}|${offersOnly}`,
+  );
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-6 sm:px-6">
+    <div className="w-full">
       {/* Search Bar */}
       <div className="mt-5">
         <Link
@@ -70,336 +78,228 @@ function HomePage() {
         </Link>
       </div>
 
-      {/* Main layout: sidebar + content */}
-      <div className="mt-6 flex items-start gap-5">
-        {/* Left Category Sidebar — sticky, persists while content scrolls */}
-        <aside
-          className="no-scrollbar sticky top-[72px] hidden w-48 shrink-0 overflow-y-auto lg:block"
-          style={{ maxHeight: "calc(100vh - 88px)" }}
-        >
-          <div className="neu rounded-3xl p-3">
-            <h2 className="mb-2 px-2 pt-1 text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
-              Categories
-            </h2>
-            <ul className="flex flex-col gap-1">
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setActiveCategory("all")}
-                  className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all ${
-                    activeCategory === "all"
-                      ? "bg-brand text-brand-foreground shadow-sm"
-                      : "hover:bg-muted/60 text-foreground"
-                  }`}
-                >
-                  <AllIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  All Categories
-                </button>
-              </li>
-              {categories.map((cat) => {
-                const Icon = cat.icon;
-                const active = activeCategory === cat.slug;
-                return (
-                  <li key={cat.slug}>
-                    <button
-                      type="button"
-                      onClick={() => setActiveCategory(cat.slug)}
-                      className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-medium transition-all ${
-                        active
-                          ? "bg-brand text-brand-foreground shadow-sm"
-                          : "hover:bg-muted/60 text-foreground hover:text-brand"
-                      }`}
-                    >
-                      <Icon
-                        className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-brand"}`}
-                        aria-hidden="true"
-                      />
-                      {cat.name}
-                    </button>
-                  </li>
-                );
-              })}
-              <li className="mt-1 border-t border-border pt-1">
-                <Link
-                  to="/categories"
-                  className="flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold text-brand hover:bg-muted/60 transition-all"
-                >
-                  <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  View All
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </aside>
-
-        {/* Right Content */}
-        <div className="min-w-0 flex-1">
-          {/* Hero Banner */}
-          <div className="neu overflow-hidden rounded-3xl">
-            <div className="flex min-h-[200px] items-center justify-between gap-4 px-6 py-6 sm:min-h-[240px] sm:px-8">
-              {/* Hero Text */}
-              <div className="max-w-[280px] flex-1">
-                <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
-                  Everything you need, <span className="text-brand">delivered to you</span>
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-                  Groceries, essentials & more at your convenience.
-                </p>
-                <Link
-                  to="/categories"
-                  className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-2.5 text-sm font-semibold text-white"
-                >
-                  Shop Now
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-              {/* Hero Basket — shrinks on narrow screens */}
-              <div className="relative flex max-w-[40%] shrink flex-col items-center sm:max-w-none sm:flex-shrink-0">
-                <img
-                  src="/3ce0b937-e727-4591-b5fa-8a8eac6f3d1b.png"
-                  alt="Shopping basket filled with everyday essentials"
-                  className="h-28 w-auto object-contain sm:h-52"
-                  loading="eager"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Shop by Store */}
-          <div className="mt-6">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold">Shop by Store</h2>
-              <Link to="/categories" className="text-sm font-semibold text-brand">
-                View All
-              </Link>
-            </div>
-            <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1">
-              {/* All Shops pill */}
-              <button
-                type="button"
-                onClick={() => setActiveShop("all")}
-                className={`flex shrink-0 flex-col items-center gap-2 rounded-2xl p-3 transition-all ${
-                  activeShop === "all" ? "neu-pressed ring-2 ring-brand" : "neu neu-hover"
-                }`}
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand">
-                  <ShoppingCart className="h-6 w-6 text-white" aria-hidden="true" />
-                </div>
-                <span className="w-16 text-center text-xs font-semibold">All Shops</span>
-              </button>
-              {/* Per-shop branded tiles */}
-              {shops.map((shop) => (
-                <ShopCard
-                  key={shop.slug}
-                  shop={shop}
-                  active={activeShop === shop.slug}
-                  onClick={() => setActiveShop(shop.slug)}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Popular Categories */}
-          {activeCategory === "all" && activeShop === "all" && (
-            <div className="mt-6">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-lg font-bold">Popular Categories</h2>
-                <Link to="/categories" className="text-sm font-semibold text-brand">
-                  See All
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {popularCategories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <button
-                      key={cat.slug}
-                      type="button"
-                      onClick={() => setActiveCategory(cat.slug)}
-                      className="neu neu-hover flex flex-col overflow-hidden rounded-3xl p-0"
-                    >
-                      <div className="flex h-28 w-full items-center justify-center bg-muted/40 sm:h-32">
-                        {cat.image ? (
-                          <img
-                            src={cat.image}
-                            alt={cat.name}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <Icon className="h-12 w-12 text-brand" aria-hidden="true" />
-                        )}
-                      </div>
-                      <div className="px-3 py-2.5">
-                        <p className="text-sm font-semibold leading-tight">{cat.name}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Filter Bar */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {/* Sort by */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  setSortOpen((v) => !v);
-                  setPriceOpen(false);
-                }}
-                className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
-              >
-                Sort by: <span className="text-brand">{sortBy}</span>
-                <ChevronDown className="h-4 w-4" aria-hidden="true" />
-              </button>
-              {sortOpen && (
-                <ul className="neu-lg absolute left-0 z-20 mt-2 w-52 rounded-2xl p-2">
-                  {sortOptions.map((opt) => (
-                    <li key={opt}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSortBy(opt);
-                          setSortOpen(false);
-                        }}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === sortBy ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
-                      >
-                        {opt}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Price */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  setPriceOpen((v) => !v);
-                  setSortOpen(false);
-                }}
-                className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
-              >
-                Price {priceFilter !== "Any Price" && <span className="text-brand">·</span>}
-                <ChevronDown className="h-4 w-4" aria-hidden="true" />
-              </button>
-              {priceOpen && (
-                <ul className="neu-lg absolute left-0 z-20 mt-2 w-52 rounded-2xl p-2">
-                  {priceOptions.map((opt) => (
-                    <li key={opt}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPriceFilter(opt);
-                          setPriceOpen(false);
-                        }}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === priceFilter ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
-                      >
-                        {opt}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Offers */}
-            <button
-              type="button"
-              onClick={() => setOffersOnly((v) => !v)}
-              className={`neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all ${offersOnly ? "bg-brand text-white" : ""}`}
+      {/* Hero Banner */}
+      <div className="neu mt-6 overflow-hidden rounded-3xl">
+        <div className="flex min-h-[200px] items-center justify-between gap-4 px-6 py-6 sm:min-h-[240px] sm:px-8 lg:min-h-[280px] lg:px-12">
+          {/* Hero Text */}
+          <div className="max-w-[280px] flex-1 lg:max-w-[420px]">
+            <h1 className="text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
+              Everything you need, <span className="text-brand">delivered to you</span>
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+              Groceries, essentials & more at your convenience.
+            </p>
+            <Link
+              to="/categories"
+              className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-transform active:scale-[0.98]"
             >
-              <Tag className="h-4 w-4" aria-hidden="true" />
-              Offers
-            </button>
-
-            {/* Active shop filter — only shown when a store is selected */}
-            {activeShop !== "all" && (
-              <button
-                type="button"
-                onClick={() => setActiveShop("all")}
-                className="flex items-center gap-1.5 rounded-2xl bg-brand px-4 py-2.5 text-sm font-semibold text-white"
-              >
-                {shops.find((s) => s.slug === activeShop)?.name}
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            )}
+              Shop Now
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
-
-          {/* Product Grid */}
-          <div className="mt-5">
-            {filtered.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 py-16 text-center">
-                <ShoppingCart className="h-14 w-14 text-muted-foreground/30" aria-hidden="true" />
-                <p className="text-base font-semibold text-muted-foreground">No products found</p>
-                <p className="text-sm text-muted-foreground">Try adjusting your filters.</p>
-              </div>
-            ) : (
-              <>
-                <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-base font-bold">
-                    {activeCategory === "all"
-                      ? "Featured Products"
-                      : categories.find((c) => c.slug === activeCategory)?.name}
-                    <span className="ml-2 text-sm font-medium text-muted-foreground">
-                      ({filtered.length})
-                    </span>
-                  </h2>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                    15–45 min delivery
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {filtered.map((p) => (
-                    <ProductCard key={p.id} product={p} />
-                  ))}
-                </div>
-              </>
-            )}
+          {/* Hero Basket — shrinks on narrow screens */}
+          <div className="relative flex max-w-[40%] shrink flex-col items-center sm:max-w-none sm:flex-shrink-0">
+            <img
+              src="/3ce0b937-e727-4591-b5fa-8a8eac6f3d1b.png"
+              alt="Shopping basket filled with everyday essentials"
+              className="h-28 w-auto object-contain sm:h-52 lg:h-60"
+              loading="eager"
+            />
           </div>
         </div>
       </div>
 
-      {/* Mobile category pills */}
-      <div className="mt-5 lg:hidden">
-        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-          <button
-            type="button"
-            onClick={() => setActiveCategory("all")}
-            className={`flex shrink-0 items-center gap-1.5 rounded-2xl px-3 py-2 text-sm font-semibold transition-all ${
-              activeCategory === "all" ? "bg-brand text-white" : "neu"
-            }`}
-          >
-            <AllIcon className="h-4 w-4" aria-hidden="true" />
-            All
-          </button>
-          {categories.map((cat) => {
+      {/* Shop by Store */}
+      <div className="mt-8">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-bold">Shop by Store</h2>
+          <Link to="/categories" className="text-sm font-semibold text-brand">
+            View All
+          </Link>
+        </div>
+        {/* overflow-x-auto clips the y axis too, so the active ring and the
+            neu-hover lift need padding inside the scroller; the negative
+            margin keeps the row flush with the rest of the page. */}
+        <div className="no-scrollbar -mx-2 flex items-start gap-3 overflow-x-auto px-2 py-2">
+          <AllShopsCard active={activeShop === "all"} onClick={() => setActiveShop("all")} />
+          {/* Per-shop branded tiles */}
+          {shops.map((shop) => (
+            <ShopCard
+              key={shop.slug}
+              shop={shop}
+              active={activeShop === shop.slug}
+              onClick={() => setActiveShop(shop.slug)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Popular Categories */}
+      <div className="mt-8">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-bold">Popular Categories</h2>
+          <Link to="/categories" className="text-sm font-semibold text-brand">
+            See All
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {popularCategories.map((cat) => {
             const Icon = cat.icon;
-            const active = activeCategory === cat.slug;
             return (
-              <button
+              <Link
                 key={cat.slug}
-                type="button"
-                onClick={() => setActiveCategory(cat.slug)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-2xl px-3 py-2 text-sm font-semibold transition-all ${
-                  active ? "bg-brand text-white" : "neu"
-                }`}
+                to="/shop/$shopSlug"
+                params={{ shopSlug: cat.slug }}
+                className="neu neu-hover flex flex-col overflow-hidden rounded-3xl"
               >
-                <Icon
-                  className={`h-4 w-4 ${active ? "text-white" : "text-brand"}`}
-                  aria-hidden="true"
-                />
-                {cat.name}
-              </button>
+                <div className="flex h-28 w-full items-center justify-center bg-muted/40 sm:h-32">
+                  {cat.image ? (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <Icon className="h-12 w-12 text-brand" aria-hidden="true" />
+                  )}
+                </div>
+                <div className="px-3 py-2.5">
+                  <p className="text-sm font-semibold leading-tight">{cat.name}</p>
+                </div>
+              </Link>
             );
           })}
         </div>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="mt-8 flex flex-wrap gap-2">
+        {/* Sort by */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setSortOpen((v) => !v);
+              setPriceOpen(false);
+            }}
+            className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
+          >
+            Sort by: <span className="text-brand">{sortBy}</span>
+            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+          </button>
+          {sortOpen && (
+            <ul className="neu-lg absolute left-0 z-20 mt-2 w-52 rounded-2xl p-2">
+              {sortOptions.map((opt) => (
+                <li key={opt}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSortBy(opt);
+                      setSortOpen(false);
+                    }}
+                    className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === sortBy ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
+                  >
+                    {opt}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Price */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setPriceOpen((v) => !v);
+              setSortOpen(false);
+            }}
+            className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
+          >
+            Price {priceFilter !== "Any Price" && <span className="text-brand">·</span>}
+            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+          </button>
+          {priceOpen && (
+            <ul className="neu-lg absolute left-0 z-20 mt-2 w-52 rounded-2xl p-2">
+              {priceOptions.map((opt) => (
+                <li key={opt}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPriceFilter(opt);
+                      setPriceOpen(false);
+                    }}
+                    className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === priceFilter ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
+                  >
+                    {opt}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Offers */}
+        <button
+          type="button"
+          onClick={() => setOffersOnly((v) => !v)}
+          className={`neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all ${offersOnly ? "bg-brand text-white" : ""}`}
+        >
+          <Tag className="h-4 w-4" aria-hidden="true" />
+          Offers
+        </button>
+
+        {/* Active shop filter — only shown when a store is selected */}
+        {activeShop !== "all" && (
+          <button
+            type="button"
+            onClick={() => setActiveShop("all")}
+            className="flex items-center gap-1.5 rounded-2xl bg-brand px-4 py-2.5 text-sm font-semibold text-white"
+          >
+            {shops.find((s) => s.slug === activeShop)?.name}
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {/* Product Grid */}
+      <div className="mt-5">
+        {total === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-16 text-center">
+            <ShoppingCart className="h-14 w-14 text-muted-foreground/30" aria-hidden="true" />
+            <p className="text-base font-semibold text-muted-foreground">No products found</p>
+            <p className="text-sm text-muted-foreground">Try adjusting your filters.</p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-base font-bold">
+                Featured Products
+                <span className="ml-2 text-sm font-medium text-muted-foreground">({total})</span>
+              </h2>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                15–45 min delivery
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {pageItems.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+            <Pagination
+              page={page}
+              pageCount={pageCount}
+              onPageChange={goToPage}
+              rangeStart={rangeStart}
+              rangeEnd={rangeEnd}
+              total={total}
+              label="products"
+            />
+          </>
+        )}
       </div>
     </div>
   );

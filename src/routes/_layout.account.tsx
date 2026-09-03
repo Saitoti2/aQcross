@@ -52,7 +52,7 @@ function AccountPage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
+    <div className="w-full pt-5">
       {/* Profile card */}
       <div className="neu mb-6 rounded-3xl p-5">
         <div className="flex items-center gap-4">

@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 import { useState } from "react";
 import type { Shop } from "@/lib/data";
 
@@ -60,6 +60,45 @@ export function ShopLogo({ shop, size = "md", className = "" }: ShopLogoProps) {
   );
 }
 
+/*
+ * One shared shell for every "Shop by Store" tile.
+ *
+ * Width and the name/meta block are fixed so a two-line shop name
+ * ("Goodlife Pharmacy") lines up with a one-line one and every tile in the
+ * row ends up the same height.
+ */
+const tileShell =
+  "flex w-[6.75rem] shrink-0 flex-col items-center gap-2 rounded-2xl p-3 transition-all";
+const tileName =
+  "flex h-8 w-full items-center justify-center text-center text-xs font-semibold leading-tight";
+const tileMeta = "flex h-4 items-center justify-center gap-1";
+
+function tileState(active: boolean) {
+  return active ? "neu-pressed ring-2 ring-brand" : "neu neu-hover";
+}
+
+/**
+ * AllShopsCard — the "clear the store filter" tile that leads the row.
+ * Shares ShopCard's shell so it sits flush with the branded tiles.
+ */
+interface AllShopsCardProps {
+  active?: boolean;
+  onClick?: () => void;
+}
+
+export function AllShopsCard({ active = false, onClick }: AllShopsCardProps) {
+  return (
+    <button type="button" onClick={onClick} className={`${tileShell} ${tileState(active)}`}>
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand">
+        <ShoppingCart className="h-6 w-6 text-white" aria-hidden="true" />
+      </div>
+      <span className={tileName}>All Shops</span>
+      {/* Empty meta row keeps this tile the same height as the rated ones. */}
+      <div className={tileMeta} aria-hidden="true" />
+    </button>
+  );
+}
+
 /**
  * ShopCard — carousel tile with real logo, name and rating.
  * Used in the "Shop by Store" horizontal scroll on the home page.
@@ -72,16 +111,12 @@ interface ShopCardProps {
 
 export function ShopCard({ shop, active = false, onClick }: ShopCardProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex shrink-0 flex-col items-center gap-2 rounded-2xl p-3 transition-all ${
-        active ? "neu-pressed ring-2 ring-brand" : "neu neu-hover"
-      }`}
-    >
+    <button type="button" onClick={onClick} className={`${tileShell} ${tileState(active)}`}>
       <ShopLogo shop={shop} size="md" />
-      <span className="w-16 text-center text-xs font-semibold leading-tight">{shop.name}</span>
-      <div className="flex items-center gap-1">
+      <span className={tileName}>
+        <span className="line-clamp-2">{shop.name}</span>
+      </span>
+      <div className={tileMeta}>
         <Star className="h-3 w-3 fill-brand text-brand" aria-hidden="true" />
         <span className="text-[0.65rem] font-medium text-muted-foreground">{shop.rating}</span>
       </div>

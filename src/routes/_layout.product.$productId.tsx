@@ -27,7 +27,7 @@ function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="mx-auto max-w-[1240px] px-4 py-12 text-center sm:px-6">
+      <div className="py-12 text-center">
         <p className="text-lg font-semibold text-muted-foreground">Product not found</p>
         <Link to="/" className="mt-4 inline-block text-sm font-semibold text-brand">
           Back to Home
@@ -47,7 +47,7 @@ function ProductDetailPage() {
     .slice(0, 4);
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 sm:px-6">
+    <div className="w-full">
       {/* Back */}
       <div className="py-4">
         <Link

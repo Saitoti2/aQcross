@@ -9,7 +9,7 @@ function CategoriesPage() {
   const AllIcon = allCategoriesIcon;
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
+    <div className="w-full py-6">
       <h1 className="mb-1 text-2xl font-bold">Categories</h1>
       <p className="mb-6 text-sm text-muted-foreground">Browse everything available on aQross</p>
 

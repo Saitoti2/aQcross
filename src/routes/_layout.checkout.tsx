@@ -37,7 +37,7 @@ function CheckoutPage() {
 
   if (count === 0 && !submitted) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-[1240px] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <h1 className="text-xl font-bold">Nothing to checkout</h1>
         <Link to="/" className="rounded-2xl bg-brand px-6 py-3 text-sm font-semibold text-white">
           Back to Shop
@@ -48,7 +48,7 @@ function CheckoutPage() {
 
   if (submitted) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-[600px] flex-col items-center justify-center gap-5 px-4 py-12 text-center sm:px-6">
+      <div className="mx-auto flex min-h-[60vh] max-w-[600px] flex-col items-center justify-center gap-5 py-12 text-center">
         <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand/10">
           <CheckCircle className="h-12 w-12 text-brand" aria-hidden="true" />
         </div>
@@ -93,7 +93,7 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
+    <div className="w-full pt-5">
       <h1 className="mb-6 text-2xl font-bold">Checkout</h1>
 
       <form onSubmit={handleSubmit}>
