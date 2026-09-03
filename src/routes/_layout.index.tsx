@@ -1,16 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  ChevronRight,
-  Truck,
-  Tag,
-  ShieldCheck,
-  RefreshCw,
-  ShoppingCart,
-  SlidersHorizontal,
-  ChevronDown,
-  Clock,
-} from "lucide-react";
+import { ChevronRight, Tag, ShoppingCart, ChevronDown, Clock, X } from "lucide-react";
 import { categories, popularCategorySlugs, shops, products, allCategoriesIcon } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ShopCard } from "@/components/shop/ShopLogo";
@@ -18,14 +8,6 @@ import { ShopCard } from "@/components/shop/ShopLogo";
 export const Route = createFileRoute("/_layout/")({
   component: HomePage,
 });
-
-// ─── Service Benefits ────────────────────────────────────────────────────────
-const benefits = [
-  { icon: Truck, title: "Fast Delivery", sub: "15–45 mins" },
-  { icon: Tag, title: "Student Deals", sub: "Special offers" },
-  { icon: ShieldCheck, title: "Verified Shops", sub: "Trusted stores" },
-  { icon: RefreshCw, title: "Easy Returns", sub: "Hassle free" },
-];
 
 // ─── Filter bar options ───────────────────────────────────────────────────────
 const sortOptions = ["Relevance", "Price: Low to High", "Price: High to Low", "Newest"];
@@ -37,7 +19,6 @@ function HomePage() {
   const [sortBy, setSortBy] = useState("Relevance");
   const [priceFilter, setPriceFilter] = useState("Any Price");
   const [offersOnly, setOffersOnly] = useState(false);
-  const [heroSlide, setHeroSlide] = useState(0);
   const [sortOpen, setSortOpen] = useState(false);
   const [priceOpen, setPriceOpen] = useState(false);
 
@@ -46,69 +27,56 @@ function HomePage() {
     .filter(Boolean) as typeof categories;
 
   // Filtered products
-  const filtered = products.filter((p) => {
-    if (activeCategory !== "all" && p.category !== activeCategory) return false;
-    if (activeShop !== "all" && p.shop !== activeShop) return false;
-    if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
-    if (priceFilter === "Under KES 200" && p.price >= 200) return false;
-    if (priceFilter === "KES 200–500" && (p.price < 200 || p.price > 500)) return false;
-    if (priceFilter === "KES 500–1000" && (p.price < 500 || p.price > 1000)) return false;
-    if (priceFilter === "Over KES 1000" && p.price <= 1000) return false;
-    return true;
-  }).sort((a, b) => {
-    if (sortBy === "Price: Low to High") return a.price - b.price;
-    if (sortBy === "Price: High to Low") return b.price - a.price;
-    return 0;
-  });
+  const filtered = products
+    .filter((p) => {
+      if (activeCategory !== "all" && p.category !== activeCategory) return false;
+      if (activeShop !== "all" && p.shop !== activeShop) return false;
+      if (offersOnly && !p.wasPrice && !p.studentDeal) return false;
+      if (priceFilter === "Under KES 200" && p.price >= 200) return false;
+      if (priceFilter === "KES 200–500" && (p.price < 200 || p.price > 500)) return false;
+      if (priceFilter === "KES 500–1000" && (p.price < 500 || p.price > 1000)) return false;
+      if (priceFilter === "Over KES 1000" && p.price <= 1000) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "Price: Low to High") return a.price - b.price;
+      if (sortBy === "Price: High to Low") return b.price - a.price;
+      return 0;
+    });
 
   const AllIcon = allCategoriesIcon;
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 pb-6 sm:px-6">
-
       {/* Search Bar */}
-      <div className="mt-5 flex gap-3">
+      <div className="mt-5">
         <Link
           to="/search"
-          className="neu neu-hover flex flex-1 items-center gap-3 rounded-2xl px-4 py-3.5"
+          className="neu neu-hover flex items-center gap-3 rounded-2xl px-4 py-3.5"
         >
-          <svg className="h-5 w-5 shrink-0 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+          <svg
+            className="h-5 w-5 shrink-0 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
-          <span className="text-sm text-muted-foreground">Search for products, categories or shops...</span>
+          <span className="text-sm text-muted-foreground">
+            Search for products, categories or shops...
+          </span>
         </Link>
-        <Link
-          to="/search"
-          aria-label="Open filters"
-          className="neu neu-hover flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl"
-        >
-          <SlidersHorizontal className="h-5 w-5 text-brand" aria-hidden="true" />
-        </Link>
-      </div>
-
-      {/* Service Benefits */}
-      <div className="mt-5 neu rounded-3xl px-4 py-4">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {benefits.map(({ icon: Icon, title, sub }) => (
-            <div key={title} className="flex items-center gap-3">
-              <div className="neu-sm flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
-                <Icon className="h-5 w-5 text-brand" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold leading-tight">{title}</p>
-                <p className="text-xs text-muted-foreground">{sub}</p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Main layout: sidebar + content */}
       <div className="mt-6 flex items-start gap-5">
-
         {/* Left Category Sidebar — sticky, persists while content scrolls */}
-        <aside className="no-scrollbar sticky top-[72px] hidden w-48 shrink-0 overflow-y-auto lg:block"
-               style={{ maxHeight: "calc(100vh - 88px)" }}>
+        <aside
+          className="no-scrollbar sticky top-[72px] hidden w-48 shrink-0 overflow-y-auto lg:block"
+          style={{ maxHeight: "calc(100vh - 88px)" }}
+        >
           <div className="neu rounded-3xl p-3">
             <h2 className="mb-2 px-2 pt-1 text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground">
               Categories
@@ -166,15 +134,13 @@ function HomePage() {
 
         {/* Right Content */}
         <div className="min-w-0 flex-1">
-
           {/* Hero Banner */}
           <div className="neu overflow-hidden rounded-3xl">
-            <div className="flex min-h-[220px] items-center justify-between gap-4 px-6 py-6 sm:min-h-[260px] sm:px-8">
+            <div className="flex min-h-[200px] items-center justify-between gap-4 px-6 py-6 sm:min-h-[240px] sm:px-8">
               {/* Hero Text */}
               <div className="max-w-[280px] flex-1">
                 <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
-                  Everything you need,{" "}
-                  <span className="text-brand">delivered to you</span>
+                  Everything you need, <span className="text-brand">delivered to you</span>
                 </h1>
                 <p className="mt-2 text-sm text-muted-foreground sm:text-base">
                   Groceries, essentials & more at your convenience.
@@ -196,20 +162,6 @@ function HomePage() {
                   loading="eager"
                 />
               </div>
-            </div>
-            {/* Carousel indicators */}
-            <div className="flex justify-center gap-2 pb-4">
-              {[0, 1, 2].map((i) => (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={`Slide ${i + 1}`}
-                  onClick={() => setHeroSlide(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    heroSlide === i ? "w-6 bg-brand" : "w-2 bg-muted-foreground/30"
-                  }`}
-                />
-              ))}
             </div>
           </div>
 
@@ -294,7 +246,10 @@ function HomePage() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => { setSortOpen((v) => !v); setPriceOpen(false); }}
+                onClick={() => {
+                  setSortOpen((v) => !v);
+                  setPriceOpen(false);
+                }}
                 className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
               >
                 Sort by: <span className="text-brand">{sortBy}</span>
@@ -306,7 +261,10 @@ function HomePage() {
                     <li key={opt}>
                       <button
                         type="button"
-                        onClick={() => { setSortBy(opt); setSortOpen(false); }}
+                        onClick={() => {
+                          setSortBy(opt);
+                          setSortOpen(false);
+                        }}
                         className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === sortBy ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
                       >
                         {opt}
@@ -321,7 +279,10 @@ function HomePage() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => { setPriceOpen((v) => !v); setSortOpen(false); }}
+                onClick={() => {
+                  setPriceOpen((v) => !v);
+                  setSortOpen(false);
+                }}
                 className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
               >
                 Price {priceFilter !== "Any Price" && <span className="text-brand">·</span>}
@@ -333,7 +294,10 @@ function HomePage() {
                     <li key={opt}>
                       <button
                         type="button"
-                        onClick={() => { setPriceFilter(opt); setPriceOpen(false); }}
+                        onClick={() => {
+                          setPriceFilter(opt);
+                          setPriceOpen(false);
+                        }}
                         className={`w-full rounded-xl px-3 py-2 text-left text-sm ${opt === priceFilter ? "bg-brand font-semibold text-white" : "font-medium hover:bg-muted"}`}
                       >
                         {opt}
@@ -354,22 +318,17 @@ function HomePage() {
               Offers
             </button>
 
-            {/* Shop filter */}
-            <div className="relative flex items-center gap-1.5 rounded-2xl neu px-4 py-2.5 text-sm font-semibold text-muted-foreground">
-              <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-              <span>
-                {activeShop === "all" ? "All Shops" : shops.find((s) => s.slug === activeShop)?.name}
-              </span>
-            </div>
-
-            {/* Filters */}
-            <Link
-              to="/search"
-              className="neu neu-hover flex items-center gap-1.5 rounded-2xl px-4 py-2.5 text-sm font-semibold"
-            >
-              <SlidersHorizontal className="h-4 w-4 text-brand" aria-hidden="true" />
-              Filters
-            </Link>
+            {/* Active shop filter — only shown when a store is selected */}
+            {activeShop !== "all" && (
+              <button
+                type="button"
+                onClick={() => setActiveShop("all")}
+                className="flex items-center gap-1.5 rounded-2xl bg-brand px-4 py-2.5 text-sm font-semibold text-white"
+              >
+                {shops.find((s) => s.slug === activeShop)?.name}
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
           </div>
 
           {/* Product Grid */}
@@ -384,7 +343,9 @@ function HomePage() {
               <>
                 <div className="mb-3 flex items-center justify-between">
                   <h2 className="text-base font-bold">
-                    {activeCategory === "all" ? "Featured Products" : categories.find((c) => c.slug === activeCategory)?.name}
+                    {activeCategory === "all"
+                      ? "Featured Products"
+                      : categories.find((c) => c.slug === activeCategory)?.name}
                     <span className="ml-2 text-sm font-medium text-muted-foreground">
                       ({filtered.length})
                     </span>
@@ -402,7 +363,6 @@ function HomePage() {
               </>
             )}
           </div>
-
         </div>
       </div>
 
@@ -431,14 +391,16 @@ function HomePage() {
                   active ? "bg-brand text-white" : "neu"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${active ? "text-white" : "text-brand"}`} aria-hidden="true" />
+                <Icon
+                  className={`h-4 w-4 ${active ? "text-white" : "text-brand"}`}
+                  aria-hidden="true"
+                />
                 {cat.name}
               </button>
             );
           })}
         </div>
       </div>
-
     </div>
   );
 }
