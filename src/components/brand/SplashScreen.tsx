@@ -8,15 +8,21 @@ export function SplashScreen() {
     <div
       role="status"
       aria-label="Loading aQross"
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white dark:bg-[#030712]"
     >
-      {/* Logo mark */}
+      {/* Logo mark — light/dark variants */}
       <div className="flex flex-col items-center gap-6">
         <img
           src="/aQross logo-no bg.png"
           alt="aQross"
           fetchPriority="high"
-          className="h-20 w-auto animate-pulse object-contain sm:h-28"
+          className="h-20 w-auto animate-pulse object-contain sm:h-28 dark:hidden"
+        />
+        <img
+          src="/shops/aQross logo - Dark mode.png"
+          alt="aQross"
+          fetchPriority="high"
+          className="h-20 w-auto animate-pulse object-contain [mix-blend-mode:screen] sm:h-28 hidden dark:block"
         />
 
         {/* Tagline */}

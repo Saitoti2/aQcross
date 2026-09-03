@@ -3,6 +3,13 @@
 @import "tw-animate-css";
 
 /*
+ * Tell Tailwind v4 to use the .dark CLASS on <html> for all dark: utilities,
+ * rather than the default @media (prefers-color-scheme: dark).
+ * This keeps dark: utilities in sync with our manual theme toggle.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
  * aQross design system
  * Background: #FFFFFF · Brand orange: #F4510B · Font: Poppins
  * Soft neumorphism, no gradients anywhere.

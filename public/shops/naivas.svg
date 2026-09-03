@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <!-- Naivas: white background, orange bold wordmark (actual brand style) -->
+  <rect width="200" height="80" rx="10" fill="white"/>
+  <!-- Orange accent bar at top -->
+  <rect width="200" height="8" rx="0" fill="#FF6B00"/>
+  <rect x="0" y="0" width="200" height="8" rx="10" fill="#FF6B00"/>
+  <!-- Wordmark -->
+  <text x="100" y="50" font-family="Arial Black, Arial, sans-serif"
+        font-size="30" font-weight="900" fill="#FF6B00" text-anchor="middle" letter-spacing="-0.5">naivas</text>
+  <!-- Tagline -->
+  <text x="100" y="67" font-family="Arial, sans-serif"
+        font-size="9" font-weight="600" fill="#555" text-anchor="middle" letter-spacing="1.5">SUPERMARKET</text>
+</svg>

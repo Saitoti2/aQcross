@@ -4,12 +4,13 @@ import { useState } from "react";
 import { useDeliveryLocation } from "@/lib/location";
 import { useCart } from "@/lib/cart";
 import { useTheme } from "@/hooks/use-theme";
+import { Logo } from "@/components/brand/Logo";
 
 export function AppHeader() {
   const { location, setLocation, options } = useDeliveryLocation();
   const [open, setOpen] = useState(false);
   const { count } = useCart();
-  const { isDark, toggle } = useTheme();
+  const { toggle } = useTheme();
 
   return (
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm">
@@ -18,19 +19,9 @@ export function AppHeader() {
 
           {/* ── Logo ─────────────────────────────────────────────── */}
           {/* Large, visually prominent pill — the brand anchor */}
-          <Link
-            to="/"
-            aria-label="aQross home"
-            className="neu neu-hover flex shrink-0 items-center rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5"
-          >
-            <img
-              src="/aQross logo-no bg.png"
-              alt="aQross"
-              fetchPriority="high"
-              /* h-9 = 36 px on mobile, h-12 = 48 px on sm+, h-14 = 56 px on md+ */
-              className="h-9 w-auto object-contain sm:h-12 md:h-14"
-            />
-          </Link>
+          <div className="neu neu-hover flex shrink-0 items-center rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5">
+            <Logo className="h-9 sm:h-12 md:h-14" />
+          </div>
 
           {/* ── Location picker ──────────────────────────────────── */}
           <div className="relative min-w-0 flex-1">
@@ -79,17 +70,18 @@ export function AppHeader() {
           </div>
 
           {/* ── Theme toggle ─────────────────────────────────────── */}
+          {/* Icons swap via CSS dark: classes — no JS state, no hydration
+              mismatch, and no delayed icon flash after mount. */}
           <button
             type="button"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label="Toggle theme"
             onClick={toggle}
             className="neu neu-hover relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:h-13 sm:w-13"
           >
-            {isDark ? (
-              <Sun className="h-5 w-5 text-brand" aria-hidden="true" />
-            ) : (
-              <Moon className="h-5 w-5 text-foreground" aria-hidden="true" />
-            )}
+            {/* Moon shown in light mode */}
+            <Moon className="h-5 w-5 text-foreground dark:hidden" aria-hidden="true" />
+            {/* Sun shown in dark mode */}
+            <Sun className="h-5 w-5 text-brand hidden dark:block" aria-hidden="true" />
           </button>
 
           {/* ── Cart ─────────────────────────────────────────────── */}

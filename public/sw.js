@@ -1,19 +1,23 @@
 /**
- * aQross Service Worker v3
+ * aQross Service Worker v4
  *
- * Navigation strategy: NETWORK-FIRST with cache fallback.
- *   - Every page load tries the network first so HTML is always fresh.
- *   - If offline, serves the cached shell.
- *   - This ensures the correct SplashScreen (no basket) is always shown.
+ * Strategy: STATIC ASSETS ONLY — cache-first for images/fonts/icons.
  *
- * Static assets strategy: CACHE-FIRST (images, fonts, css, js).
+ * HTML navigations are intentionally NOT cached. Serving stale HTML
+ * causes the page to load without the dark-mode class baked in by the
+ * server, producing a theme flash that cannot be fixed client-side.
+ * The network is fast enough for HTML on campus connections; the app
+ * shell loads in < 1s even on 3G. Offline HTML falls back gracefully.
+ *
+ * Cache is versioned — bump CACHE to invalidate all stored assets.
  */
 
-const CACHE = "aqross-shell-v3";   // ← bump this to bust all old caches
+const CACHE = "aqross-assets-v4";
 
+// Assets that are worth pre-caching at install time
 const PRECACHE = [
-  "/",
   "/aQross logo-no bg.png",
+  "/shops/aQross logo - Dark mode.png",
   "/favicon.png",
   "/og-image.png",
 ];
@@ -24,11 +28,11 @@ self.addEventListener("install", (event) => {
     caches
       .open(CACHE)
       .then((cache) => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())   // activate immediately, don't wait
+      .then(() => self.skipWaiting())
   );
 });
 
-// ── Activate: delete every cache that isn't the current version ───
+// ── Activate: delete stale caches ────────────────────────────────
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -36,7 +40,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
       )
-      .then(() => self.clients.claim())  // take control of all open tabs now
+      .then(() => self.clients.claim())
   );
 });
 
@@ -48,35 +52,30 @@ self.addEventListener("fetch", (event) => {
   // Only intercept same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // ── HTML navigations: network-first ──────────────────────────
-  // Always fetch fresh HTML so the app shell is never stale.
-  // Falls back to cache only when truly offline.
+  // Skip Vite dev-server internals (/@, /__vite, virtual:, etc.)
+  if (url.pathname.startsWith("/@") || url.pathname.startsWith("/__")) return;
+
+  // ── HTML navigations: ALWAYS network, never cache ─────────────
+  // Serving stale HTML breaks SSR-set dark class and theme cookie.
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache the fresh shell for offline use
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE).then((cache) => cache.put("/", clone));
-          }
-          return response;
-        })
-        .catch(() =>
-          caches.match("/").then(
-            (cached) =>
-              cached ||
-              new Response(offlineFallback(), {
-                headers: { "Content-Type": "text/html; charset=utf-8" },
-              })
-          )
+      fetch(request).catch(() =>
+        caches.match("/offline.html").then(
+          (cached) =>
+            cached ||
+            new Response(offlineFallback(), {
+              headers: { "Content-Type": "text/html; charset=utf-8" },
+            })
         )
+      )
     );
     return;
   }
 
   // ── Static assets: cache-first ───────────────────────────────
-  if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf|css|js)$/)) {
+  // Only true static files — not JS/CSS served by Vite with query strings
+  if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf)$/) &&
+      !url.search) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
@@ -91,6 +90,7 @@ self.addEventListener("fetch", (event) => {
       )
     );
   }
+  // All other requests (JS, CSS, API) — let fall through to network
 });
 
 // ── Offline fallback page ─────────────────────────────────────────
@@ -100,12 +100,12 @@ function offlineFallback() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>aQross</title>
+  <title>aQross — Offline</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{
       font-family:'Poppins',system-ui,sans-serif;
-      background:#fff;
+      background:#fff;color:#333;
       display:flex;flex-direction:column;
       align-items:center;justify-content:center;
       min-height:100dvh;gap:24px;padding:24px;

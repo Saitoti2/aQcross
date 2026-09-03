@@ -1,16 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Theme = "light" | "dark";
 
 const STORAGE_KEY = "aqross-theme";
-
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-  if (stored === "dark" || stored === "light") return stored;
-  // Respect OS preference if no explicit choice stored
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
 
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
@@ -19,28 +11,31 @@ function applyTheme(theme: Theme) {
   } else {
     root.classList.remove("dark");
   }
+  try {
+    localStorage.setItem(STORAGE_KEY, theme);
+    document.cookie = `${STORAGE_KEY}=${theme};path=/;max-age=31536000;SameSite=Lax`;
+  } catch (_) {}
 }
 
 export function useTheme() {
+  /**
+   * Initialize from "light" to match SSR output — no hydration mismatch.
+   * The inline script in __root.tsx sets html.dark before first paint, so
+   * CSS-based dark: classes (Logo, theme toggle icons) are always correct
+   * without needing JS state. This hook is only needed for the toggle action.
+   */
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Sync from storage/OS on mount (client-only)
-  useEffect(() => {
-    const initial = getInitialTheme();
-    setTheme(initial);
-    applyTheme(initial);
-  }, []);
-
   const toggle = () => {
-    setTheme((prev) => {
-      const next: Theme = prev === "light" ? "dark" : "light";
-      applyTheme(next);
-      try {
-        localStorage.setItem(STORAGE_KEY, next);
-      } catch {}
-      return next;
-    });
+    // Read current state from DOM (set by the inline script) rather than
+    // relying on React state which initialises as "light" for SSR safety.
+    const current: Theme = document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light";
+    const next: Theme = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    setTheme(next);
   };
 
-  return { theme, toggle, isDark: theme === "dark" };
+  return { theme, toggle };
 }
