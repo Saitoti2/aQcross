@@ -105,14 +105,22 @@ export function Pagination({
   const showSummary = rangeStart !== undefined && rangeEnd !== undefined && total !== undefined;
 
   return (
-    <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+    /*
+     * Equal 1fr gutters either side of an auto-width middle column keep the
+     * page buttons centred on the container, so the summary's width never
+     * pushes them off-centre. Stacks and centres on narrow screens.
+     */
+    <div className="mt-8 flex flex-col items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
       {showSummary && (
-        <p className="text-xs font-medium text-muted-foreground sm:text-sm">
+        <p className="min-w-0 text-xs font-medium text-muted-foreground sm:col-start-1 sm:text-sm">
           Showing {rangeStart}–{rangeEnd} of {total} {label}
         </p>
       )}
 
-      <nav aria-label="Pagination" className="flex items-center gap-1.5 sm:ml-auto">
+      <nav
+        aria-label="Pagination"
+        className="flex items-center gap-1.5 sm:col-start-2 sm:justify-self-center"
+      >
         <button
           type="button"
           onClick={() => onPageChange(page - 1)}
