@@ -38,9 +38,7 @@ export function ShopLogo({ shop, size = "md", className = "" }: ShopLogoProps) {
         className={`${tileClass} ${shop.logoBg} ${shop.logoColor} flex shrink-0 items-center justify-center ${className}`}
         aria-label={shop.name}
       >
-        <span className="text-xs font-extrabold leading-none tracking-tight">
-          {shop.logoText}
-        </span>
+        <span className="text-xs font-extrabold leading-none tracking-tight">{shop.logoText}</span>
       </div>
     );
   }

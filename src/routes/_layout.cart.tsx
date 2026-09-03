@@ -161,9 +161,7 @@ function CartPage() {
                 <span className="font-semibold">{kes(deliveryFee)}</span>
               </div>
               {byShop.length > 1 && (
-                <p className="text-xs text-muted-foreground">
-                  Multi-shop delivery fee applied.
-                </p>
+                <p className="text-xs text-muted-foreground">Multi-shop delivery fee applied.</p>
               )}
               <div className="border-t border-border pt-3">
                 <div className="flex justify-between">
@@ -180,10 +178,7 @@ function CartPage() {
               Proceed to Checkout
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link
-              to="/"
-              className="mt-3 block text-center text-sm font-semibold text-brand"
-            >
+            <Link to="/" className="mt-3 block text-center text-sm font-semibold text-brand">
               Continue Shopping
             </Link>
           </div>

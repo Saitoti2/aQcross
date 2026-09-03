@@ -40,7 +40,7 @@ const menuSections = [
       { icon: HelpCircle, label: "Help & Support", to: "/account", desc: "FAQs, contact us" },
     ],
   },
-];
+] as const;
 
 function AccountPage() {
   // Demo user — in production this would come from an auth context
@@ -90,7 +90,7 @@ function AccountPage() {
                 return (
                   <Link
                     key={item.label}
-                    to={item.to as any}
+                    to={item.to}
                     className={`flex items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/40 ${
                       idx > 0 ? "border-t border-border" : ""
                     }`}
@@ -102,7 +102,10 @@ function AccountPage() {
                       <p className="text-sm font-semibold">{item.label}</p>
                       <p className="text-xs text-muted-foreground">{item.desc}</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <ChevronRight
+                      className="h-4 w-4 shrink-0 text-muted-foreground"
+                      aria-hidden="true"
+                    />
                   </Link>
                 );
               })}

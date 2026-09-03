@@ -11,15 +11,10 @@ function CategoriesPage() {
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <h1 className="mb-1 text-2xl font-bold">Categories</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        Browse everything available on aQross
-      </p>
+      <p className="mb-6 text-sm text-muted-foreground">Browse everything available on aQross</p>
 
       {/* All Categories shortcut */}
-      <Link
-        to="/"
-        className="neu neu-hover mb-6 flex items-center gap-4 rounded-3xl p-4"
-      >
+      <Link to="/" className="neu neu-hover mb-6 flex items-center gap-4 rounded-3xl p-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand">
           <AllIcon className="h-7 w-7 text-white" aria-hidden="true" />
         </div>

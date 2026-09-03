@@ -16,7 +16,6 @@ export function AppHeader() {
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm">
       <div className="mx-auto w-full max-w-[1240px] px-3 py-2.5 sm:px-6 sm:py-3">
         <div className="flex items-center gap-2 sm:gap-3">
-
           {/* ── Logo ─────────────────────────────────────────────── */}
           {/* Large, visually prominent pill — the brand anchor */}
           <div className="neu neu-hover flex shrink-0 items-center rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5">
@@ -36,7 +35,10 @@ export function AppHeader() {
               <span className="min-w-0 flex-1 truncate text-xs font-medium sm:text-sm">
                 {location}
               </span>
-              <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <ChevronDown
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                aria-hidden="true"
+              />
             </button>
 
             {open && (
@@ -109,7 +111,6 @@ export function AppHeader() {
               3
             </span>
           </Link>
-
         </div>
       </div>
     </header>

@@ -105,9 +105,7 @@ function NotificationsPage() {
 function NotifCard({ n }: { n: (typeof notifications)[number] }) {
   const Icon = n.icon;
   return (
-    <div
-      className={`neu rounded-3xl p-4 ${!n.read ? "ring-1 ring-brand/20" : ""}`}
-    >
+    <div className={`neu rounded-3xl p-4 ${!n.read ? "ring-1 ring-brand/20" : ""}`}>
       <div className="flex items-start gap-3">
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
@@ -120,7 +118,9 @@ function NotifCard({ n }: { n: (typeof notifications)[number] }) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-semibold leading-snug ${n.read ? "text-muted-foreground" : ""}`}>
+          <p
+            className={`text-sm font-semibold leading-snug ${n.read ? "text-muted-foreground" : ""}`}
+          >
             {n.title}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{n.body}</p>

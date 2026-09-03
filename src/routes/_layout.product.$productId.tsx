@@ -29,7 +29,9 @@ function ProductDetailPage() {
     return (
       <div className="mx-auto max-w-[1240px] px-4 py-12 text-center sm:px-6">
         <p className="text-lg font-semibold text-muted-foreground">Product not found</p>
-        <Link to="/" className="mt-4 inline-block text-sm font-semibold text-brand">Back to Home</Link>
+        <Link to="/" className="mt-4 inline-block text-sm font-semibold text-brand">
+          Back to Home
+        </Link>
       </div>
     );
   }
@@ -61,11 +63,7 @@ function ProductDetailPage() {
         {/* Image */}
         <div className="neu-pressed flex aspect-square w-full items-center justify-center rounded-3xl p-8 lg:max-w-sm">
           {cat?.image ? (
-            <img
-              src={cat.image}
-              alt={product.name}
-              className="h-full w-full object-contain"
-            />
+            <img src={cat.image} alt={product.name} className="h-full w-full object-contain" />
           ) : Icon ? (
             <Icon className="h-24 w-24 text-brand" aria-hidden="true" />
           ) : null}
@@ -108,7 +106,9 @@ function ProductDetailPage() {
 
           <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" aria-hidden="true" />
-            {product.inStock ? `Delivery ${shop?.delivery ?? "15–45 mins"}` : "Currently out of stock"}
+            {product.inStock
+              ? `Delivery ${shop?.delivery ?? "15–45 mins"}`
+              : "Currently out of stock"}
           </div>
 
           {/* Price */}
@@ -127,7 +127,9 @@ function ProductDetailPage() {
           </div>
 
           {/* Description */}
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            {product.description}
+          </p>
 
           {/* Add to cart */}
           <div className="mt-6">

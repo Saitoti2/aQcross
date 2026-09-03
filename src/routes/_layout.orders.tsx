@@ -58,12 +58,8 @@ function OrdersPage() {
     toast.success("Items added to cart");
   }
 
-  const active = demoOrders.filter(
-    (o) => o.status === "preparing" || o.status === "dispatched"
-  );
-  const past = demoOrders.filter(
-    (o) => o.status === "delivered" || o.status === "cancelled"
-  );
+  const active = demoOrders.filter((o) => o.status === "preparing" || o.status === "dispatched");
+  const past = demoOrders.filter((o) => o.status === "delivered" || o.status === "cancelled");
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 pb-8 pt-5 sm:px-6">
@@ -127,7 +123,7 @@ function OrderCard({
   const resolvedItems = order.items
     .map((i) => ({ product: getProduct(i.productId), qty: i.qty }))
     .filter((i): i is { product: NonNullable<ReturnType<typeof getProduct>>; qty: number } =>
-      Boolean(i.product)
+      Boolean(i.product),
     );
 
   const itemTotal = resolvedItems.reduce((s, i) => s + i.product.price * i.qty, 0);

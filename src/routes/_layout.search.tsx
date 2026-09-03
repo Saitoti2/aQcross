@@ -33,8 +33,7 @@ function SearchPage() {
     });
   }, [query, activeCategory, activeShop, offersOnly, inStockOnly]);
 
-  const hasFilters =
-    activeCategory !== "all" || activeShop !== "all" || offersOnly || inStockOnly;
+  const hasFilters = activeCategory !== "all" || activeShop !== "all" || offersOnly || inStockOnly;
 
   function clearFilters() {
     setActiveCategory("all");
@@ -196,9 +195,7 @@ function SearchPage() {
       {!query && !hasFilters && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <Search className="h-14 w-14 text-muted-foreground/30" aria-hidden="true" />
-          <p className="text-base font-semibold text-muted-foreground">
-            Search for anything
-          </p>
+          <p className="text-base font-semibold text-muted-foreground">Search for anything</p>
           <p className="text-sm text-muted-foreground">
             Products, categories, shops — it's all here.
           </p>

@@ -28,7 +28,7 @@ self.addEventListener("install", (event) => {
     caches
       .open(CACHE)
       .then((cache) => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting())
+      .then(() => self.skipWaiting()),
   );
 });
 
@@ -37,10 +37,8 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-      )
-      .then(() => self.clients.claim())
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim()),
   );
 });
 
@@ -65,17 +63,16 @@ self.addEventListener("fetch", (event) => {
             cached ||
             new Response(offlineFallback(), {
               headers: { "Content-Type": "text/html; charset=utf-8" },
-            })
-        )
-      )
+            }),
+        ),
+      ),
     );
     return;
   }
 
   // ── Static assets: cache-first ───────────────────────────────
   // Only true static files — not JS/CSS served by Vite with query strings
-  if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf)$/) &&
-      !url.search) {
+  if (url.pathname.match(/\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf)$/) && !url.search) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
@@ -86,8 +83,8 @@ self.addEventListener("fetch", (event) => {
               caches.open(CACHE).then((cache) => cache.put(request, clone));
             }
             return response;
-          })
-      )
+          }),
+      ),
     );
   }
   // All other requests (JS, CSS, API) — let fall through to network

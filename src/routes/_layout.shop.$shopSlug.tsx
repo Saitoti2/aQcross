@@ -1,13 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  Star,
-  Clock,
-  ShieldCheck,
-  ChevronLeft,
-  SlidersHorizontal,
-  Tag,
-} from "lucide-react";
+import { Star, Clock, ShieldCheck, ChevronLeft, SlidersHorizontal, Tag } from "lucide-react";
 import { getShop, products, categories, getCategory } from "@/lib/data";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { ShopLogo } from "@/components/shop/ShopLogo";
@@ -44,7 +37,7 @@ function ShopPage() {
     ...new Set(
       products
         .filter((p) => (shop ? p.shop === shop.slug : cat ? p.category === cat.slug : true))
-        .map((p) => p.category)
+        .map((p) => p.category),
     ),
   ]
     .map((s) => categories.find((c) => c.slug === s))

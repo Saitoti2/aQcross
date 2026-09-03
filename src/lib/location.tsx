@@ -10,7 +10,9 @@ type LocationContextValue = {
 const LocationContext = createContext<LocationContextValue | null>(null);
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
-  const [location, setLocation] = useState<string>(deliveryLocations[0] ?? "KCA University, Nairobi");
+  const [location, setLocation] = useState<string>(
+    deliveryLocations[0] ?? "KCA University, Nairobi",
+  );
   return (
     <LocationContext.Provider value={{ location, setLocation, options: deliveryLocations }}>
       {children}

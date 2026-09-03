@@ -14,7 +14,9 @@ function applyTheme(theme: Theme) {
   try {
     localStorage.setItem(STORAGE_KEY, theme);
     document.cookie = `${STORAGE_KEY}=${theme};path=/;max-age=31536000;SameSite=Lax`;
-  } catch (_) {}
+  } catch {
+    /* storage unavailable (private mode / disabled cookies) */
+  }
 }
 
 export function useTheme() {
@@ -29,9 +31,7 @@ export function useTheme() {
   const toggle = () => {
     // Read current state from DOM (set by the inline script) rather than
     // relying on React state which initialises as "light" for SSR safety.
-    const current: Theme = document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light";
+    const current: Theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
     const next: Theme = current === "dark" ? "light" : "dark";
     applyTheme(next);
     setTheme(next);
